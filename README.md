@@ -20,16 +20,16 @@
 
 全书围绕核心公式 **Agent = LLM + 上下文 + 工具** 展开，十章内容如下：
 
-- **第 1 章 · Agent 基础知识**：从"模型即 Agent"的新范式出发，建立 **Agent = LLM + 上下文 + 工具** 的核心公式，并引入 Harness 工程——模型之外的一切工程能力，才是真正的竞争力所在。
+- **第 1 章 · Agent 基础知识**：从“模型即 Agent”的新范式出发，建立 **Agent = LLM + 上下文 + 工具** 的核心公式，并引入 Harness 工程——模型之外的一切工程能力，才是真正的竞争力所在。
 - **第 2 章 · 上下文工程**：上下文决定 Agent 的能力上限。深入大模型 API 的上下文结构、KV Cache 友好设计、提示工程、动态提示词与 Agent Skills、状态栏元信息，以及上下文压缩策略。
 - **第 3 章 · 用户记忆和知识库**：让 Agent 跨会话记住用户、并接入外部知识。涵盖用户记忆系统、RAG 基础管道，以及超越扁平文本的知识组织与检索（结构化索引、知识图谱等）。
 - **第 4 章 · 工具**：工具是 Agent 的双手。讲工具分类与通用设计原则、MCP 协议与工具选择的挑战、感知/执行/协作三类工具，以及事件驱动的异步 Agent。
-- **第 5 章 · Coding Agent 与代码生成**：代码是"能创造新工具的工具"，是通用 Agent 的元能力。以生产级 Coding Agent 为例，展示这一最强通用工具的完整实现。
+- **第 5 章 · Coding Agent 与代码生成**：代码是“能创造新工具的工具”，是通用 Agent 的元能力。以生产级 Coding Agent 为例，展示这一最强通用工具的完整实现。
 - **第 6 章 · Agent 的评估**：把 Agent 的表现变成可比较的信号。从评估环境、数据集设计、指标体系，到统计显著性、可观测性、评估驱动选型，直至生产级内部评估与仿真环境。
 - **第 7 章 · 模型后训练**：预训练、SFT、RL 三阶段全景。何时选 SFT、何时选 RL，RLHF、算法比较、数据与环境，以及让模型学会工具调用、提升样本效率的前沿探索。
-- **第 8 章 · Agent 的自我进化**：不改权重也能成长。三种学习范式，从经验中学习、主动工具发现，到"从工具使用者到工具创造者"，让 Agent 从"聪明"走向"熟练"。
+- **第 8 章 · Agent 的自我进化**：不改权重也能成长。三种学习范式，从经验中学习、主动工具发现，到“从工具使用者到工具创造者”，让 Agent 从“聪明”走向“熟练”。
 - **第 9 章 · 多模态与实时交互**：把感知与行动从文本扩展到语音、GUI 与物理世界。语音三范式（级联/端到端全模态/全双工）、流式语音感知与合成、Computer Use 与机器人操作。
-- **第 10 章 · 多 Agent 协作**：群体的智能可以高于个体。多 Agent 分类框架、何时真正优于单 Agent、共享与不共享上下文的协作、失败模式，以及涌现的"Agent 社会"。
+- **第 10 章 · 多 Agent 协作**：群体的智能可以高于个体。多 Agent 分类框架、何时真正优于单 Agent、共享与不共享上下文的协作、失败模式，以及涌现的“Agent 社会”。
 
 ## 💻 配套代码
 
@@ -37,7 +37,7 @@
 
 ### 项目类型说明
 
-配套项目分为三类，请对照下方图标了解每个项目"开箱即用"的程度：
+配套项目分为三类，请对照下方图标了解每个项目“开箱即用”的程度：
 
 - ✅ **可独立运行**：本仓库自带完整代码，配置好 API Key（见文末）即可运行。
 - 📖 **复现指南**：项目本身是一份详细的复现文档，依赖需自行 `git clone` 的**外部仓库**（训练框架、评测基准等），见下方《外部仓库获取》。
@@ -50,62 +50,16 @@
 | `chapter7/AdaptThink` · `AWorld-train` · `MiniMind-pretrain` · `retool` · `SpatialReasoning` | 📖 复现指南 | 训练类实验，依赖外部框架，按 README 复现 |
 | 第 6 章全部基准 · 第 7 章多数训练框架 · 第 9 章 `browser-use`/`claude-quickstarts` · 第 10 章 `use-computer-while-calling` | 📖 复现指南 | 依赖外部仓库，见《外部仓库获取》 |
 
-### 外部仓库获取
+### 外部仓库获取（简要）
 
-出于体积与版权考虑，第 6、7、9 章用到的评测基准与训练框架**未内置**在本仓库，需要自行克隆到对应目录（下方为各仓库的上游地址与本书验证过的提交）。可将以下命令保存为脚本一次性拉取：
-
-```bash
-# 第 6 章 · 评测基准
-git clone https://github.com/google-research/android_world.git         chapter6/android_world
-git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
-git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
-git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
-git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
-git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
-
-# 第 7 章 · 训练框架（bojieli/* 为本书适配的分支）
-git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # 实验 7-3 从零训 LLM
-git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # 实验 7-4 从零训 VLM（投影层）
-git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
-git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
-git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
-git clone https://github.com/bojieli/verl.git                          chapter7/verl
-git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
-git clone https://github.com/bojieli/lighteval.git                     chapter7/Intuitor/lighteval
-git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # 实验 7-14 RLVP 论文代码
-git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # 实验 7-13 视觉-语言-动作 RL
-
-# 第 9 章 · 浏览器自动化与 Claude 示例
-git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
-git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
-
-# 第 10 章 · 双 Agent 架构（已独立为 TalkAct 项目）+ 斯坦福 AI 小镇
-git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
-git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # 实验 10-7 斯坦福 AI 小镇
-```
-
-> 各项目 README 中如标注了特定提交（commit），请按其说明 `git checkout` 到对应版本，以保证复现结果一致。
-> 第 10 章 `use-computer-while-calling` 已发展为持续维护的独立仓库 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)，本仓库仅保留一份指向它的说明文档（`chapter10/use-computer-while-calling/README.md`）。
-
-**依赖真实硬件 / 外部环境的实验（无本仓库代码，指向上游文档）：**
-
-- **实验 9-8 / 9-9 · XLeRobot 遥操作与 LLM Agent 控制**：需 SO-100/XLeRobot 机械臂，按上游文档操作 —— [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html)
-- **实验 9-10 · RGB 零样本 Sim2Real 抓取**：[`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real)（仿真训练部分可纯 GPU 完成，真实部署需 SO-100 机械臂）
-- **实验 6-11 · OpenVLA + RoboTwin2 仿真评估**：VLA 训练/环境依赖见 `chapter7/SimpleVLA-RL` 的 README（其中说明 OpenVLA、RoboTwin2 的获取与配置）
-
-**读者练习类实验（书中作为练习题给出，复用已文档化的既有项目，无专属目录）：**
-
-- **实验 5-12 · 能创造 Agent 的 Agent**：基于 `chapter5/coding-agent` 自举扩展
-- **实验 6-2 / 6-3 / 6-4 / 6-9**：分别为人肉基准、记忆评估、JSON Cards vs RAG、记忆选型——改造复用第 3 章 `user-memory` / `user-memory-evaluation` / `contextual-retrieval` 等项目
-- **实验 7-8 · Prompt 蒸馏**：落地实现见第 8 章 `chapter8/prompt-distillation`（跨章复用）
-- **实验 7-9 · CoT 蒸馏 `[扩展]`**：书中给出实验设计与验收标准，作为读者扩展实验，暂无专属代码
+第 6、7、9、10 章的**部分**实验依赖评测基准、训练框架、机器人平台等**外部仓库**（出于体积与版权未内置本仓库）。为免一上来信息过载，**完整的克隆命令、上游地址与本书验证过的提交，见文末《附录 · 外部仓库获取》**。建议先从前面各章可独立运行的项目上手，需要复现训练 / 评测 / 机器人类实验时，再按文末指引快速获取。
 
 ## 🚀 第 1 章 · Agent 基础知识
 
 ### learning-from-experience - 强化学习 vs LLM 对比
 `chapter1/learning-from-experience/`
 
-对比传统强化学习（Q-learning）与基于 LLM 的上下文学习，复现 Shunyu Yao 的 "The Second Half" 博文中的关键洞察。通过寻宝游戏展示 LLM 如何以 250-400 倍的样本效率超越传统 RL。
+对比传统强化学习（Q-learning）与基于 LLM 的上下文学习，复现 Shunyu Yao 的 “The Second Half” 博文中的关键洞察。通过寻宝游戏展示 LLM 如何以 250-400 倍的样本效率超越传统 RL。
 
 **核心概念**：强化学习、上下文学习、样本效率、先验知识
 
@@ -203,6 +157,13 @@ git clone https://github.com/joonspk-research/generative_agents.git    chapter10
 构建长期用户记忆系统，让 Agent 能够记住用户偏好和历史交互，提供个性化服务。
 
 **核心概念**：长期记忆、个性化、用户建模
+
+### mem0 / memobase - 开源记忆框架对照
+`chapter3/mem0/` 和 `chapter3/memobase/`
+
+用 mem0、Memobase 两个开源记忆框架各自实现一版用户记忆，作为实验 3-2「记忆策略对比」的对照实现，便于横向比较不同记忆方案的抽取形态与回答质量。
+
+**核心概念**：记忆框架、mem0、Memobase、方案对比
 
 ### user-memory-evaluation - 用户记忆评估框架
 `chapter3/user-memory-evaluation/`
@@ -603,7 +564,7 @@ verl 是专门为大语言模型 RLHF 训练设计的高效强化学习框架，
 ### gaia-experience - 从成功经验中学习
 `chapter8/gaia-experience/`
 
-基于 AWorld 框架和 GAIA 基准测试，实现完整的"学习-应用"闭环。Agent 自动总结成功的任务轨迹为结构化经验，并在新任务中检索应用，实现自我进化。
+基于 AWorld 框架和 GAIA 基准测试，实现完整的“学习-应用”闭环。Agent 自动总结成功的任务轨迹为结构化经验，并在新任务中检索应用，实现自我进化。
 
 **核心概念**：经验学习、策略摘要、轨迹总结、自我进化
 
@@ -781,15 +742,15 @@ Claude API 的快速入门示例和最佳实践，涵盖各种使用场景。
 
 学习路径与全书章节一一对应，围绕三大支柱层层展开：
 
-- **第 1 章 · 基础篇**：建立对 Agent 系统的完整认知框架——理解 RL 中的 Agent 定义、对比传统 RL 与 LLM+RL 范式的样本效率差异、理解"模型即 Agent"的新范式，掌握 **Agent = 模型 + 上下文 + 工具** 的核心框架。**关键洞察**：先验知识的重要性超越算法和环境。
+- **第 1 章 · 基础篇**：建立对 Agent 系统的完整认知框架——理解 RL 中的 Agent 定义、对比传统 RL 与 LLM+RL 范式的样本效率差异、理解“模型即 Agent”的新范式，掌握 **Agent = 模型 + 上下文 + 工具** 的核心框架。**关键洞察**：先验知识的重要性超越算法和环境。
 
 - **第 2–3 章 · 上下文篇**：上下文是 Agent 的操作系统。第 2 章覆盖系统提示、KV Cache 友好设计、上下文压缩与提示工程消融；第 3 章覆盖用户记忆、稠密/稀疏/混合检索、Agentic RAG、上下文感知检索与结构化知识提取。**关键洞察**：完整的上下文包括系统指令、对话历史、推理过程、工具交互记录、用户记忆和外部知识。
 
 - **第 4–5 章 · 工具篇**：工具是 Agent 与世界交互的桥梁。第 4 章覆盖感知/执行/协作三类 MCP 工具、事件触发与异步架构；第 5 章深入生产级 Coding Agent 的完整实现。**关键洞察**：工具设计应通用化（代码解释器优于计算器），代码是能创造新工具的元能力。
 
-- **第 6–7 章 · 模型篇**：如何度量与放大智能。第 6 章覆盖 Terminal-Bench、SWE-bench、GAIA、OSWorld、Tau2-Bench 等评估基准；第 7 章覆盖 SFT、RL、RLHF、样本效率等后训练技术。**关键洞察**：独立的验证信号比"让模型再想一遍"更可靠；"模型即 Agent"通过 RL 把工具调用内化为原生能力。
+- **第 6–7 章 · 模型篇**：如何度量与放大智能。第 6 章覆盖 Terminal-Bench、SWE-bench、GAIA、OSWorld、Tau2-Bench 等评估基准；第 7 章覆盖 SFT、RL、RLHF、样本效率等后训练技术。**关键洞察**：独立的验证信号比“让模型再想一遍”更可靠；“模型即 Agent”通过 RL 把工具调用内化为原生能力。
 
-- **第 8 章 · 自我进化篇**：让 Agent 在不改权重的前提下从经验中成长——经验学习、工作流外化为工具、提示与观察蒸馏进参数。**关键洞察**：从经验中学习是 Agent 从"聪明"走向"熟练"的关键。
+- **第 8 章 · 自我进化篇**：让 Agent 在不改权重的前提下从经验中成长——经验学习、工作流外化为工具、提示与观察蒸馏进参数。**关键洞察**：从经验中学习是 Agent 从“聪明”走向“熟练”的关键。
 
 - **第 9–10 章 · 拓展与协作篇**：第 9 章把感知与行动从文本扩展到语音、GUI 与物理世界；第 10 章通过多 Agent 分工协作处理复杂任务。**关键洞察**：多 Agent 系统的每个设计决策都能在单 Agent 的三要素中找到对应。
 
@@ -812,16 +773,74 @@ Claude API 的快速入门示例和最佳实践，涵盖各种使用场景。
 ## 🔑 API 密钥
 
 建议大家申请几个平台的 API key，方便学习：
-- **Kimi**: https://platform.moonshot.cn/
+- **Kimi**: https://platform.moonshot.cn/ 月之暗面的 Kimi 系列，长上下文与 Agent 能力强
+- **智谱 GLM**: https://open.bigmodel.cn/ 智谱 AI 的 GLM 系列（GLM-4.6 等），中文能力强、性价比高，也很推荐
 - **Siliconflow**: https://siliconflow.cn/ 上面有各种开源模型，包括 DeepSeek、Qwen 等
 - **火山引擎**: https://www.volcengine.com/product/ark 上面有字节的闭源模型（豆包），国内访问延迟比较低
 - **OpenRouter**: https://openrouter.ai/ 可以从国内直接访问海外的各种闭源和开源模型，包括 Gemini 2.5 Pro、Claude 4 Sonnet、OpenAI GPT-5 等（官方 API 需要海外 IP 和支付方式，OpenAI 还需要海外身份实名认证，注册比较麻烦）
 
 模型选型可以参考： https://01.me/2025/07/llm-api-setup/
 
+## 📦 附录 · 外部仓库获取
+
+出于体积与版权考虑，第 6、7、9 章用到的评测基准与训练框架**未内置**在本仓库，需要自行克隆到对应目录（下方为各仓库的上游地址与本书验证过的提交）。可将以下命令保存为脚本一次性拉取：
+
+```bash
+# 第 6 章 · 评测基准
+git clone https://github.com/google-research/android_world.git         chapter6/android_world
+git clone https://huggingface.co/datasets/gaia-benchmark/GAIA          chapter6/GAIA
+git clone https://github.com/xlang-ai/OSWorld.git                      chapter6/OSWorld
+git clone https://github.com/SWE-bench/SWE-bench.git                   chapter6/SWE-bench
+git clone https://github.com/sierra-research/tau2-bench.git            chapter6/tau2-bench
+git clone https://github.com/laude-institute/terminal-bench.git        chapter6/terminal-bench
+
+# 第 7 章 · 训练框架（bojieli/* 为本书适配的分支）
+git clone https://github.com/bojieli/minimind.git                      chapter7/MiniMind-pretrain/minimind      # 实验 7-3 从零训 LLM
+git clone https://github.com/bojieli/minimind-v.git                    chapter7/MiniMind-pretrain/minimind-v    # 实验 7-4 从零训 VLM（投影层）
+git clone https://github.com/bojieli/AdaptThink.git                    chapter7/AdaptThink-original
+git clone https://github.com/bojieli/AWorld.git                        chapter7/AWorld
+git clone https://github.com/bojieli/SFTvsRL.git                       chapter7/SFTvsRL
+git clone https://github.com/bojieli/verl.git                          chapter7/verl
+git clone https://github.com/thinking-machines-lab/tinker-cookbook.git chapter7/tinker-cookbook
+git clone https://github.com/bojieli/lighteval.git                     chapter7/Intuitor/lighteval
+git clone https://github.com/19PINE-AI/rlvp.git                        chapter7/RLVP/rlvp                       # 实验 7-14 RLVP 论文代码
+git clone https://github.com/PRIME-RL/SimpleVLA-RL.git                 chapter7/SimpleVLA-RL/SimpleVLA-RL       # 实验 7-13 视觉-语言-动作 RL
+
+# 第 9 章 · 浏览器自动化与 Claude 示例
+git clone https://github.com/browser-use/browser-use.git               chapter9/browser-use
+git clone https://github.com/anthropics/claude-quickstarts.git         chapter9/claude-quickstarts
+
+# 第 10 章 · 双 Agent 架构（已独立为 TalkAct 项目）+ 斯坦福 AI 小镇
+git clone https://github.com/19PINE-AI/TalkAct.git                     chapter10/use-computer-while-calling
+git clone https://github.com/joonspk-research/generative_agents.git    chapter10/generative_agents             # 实验 10-7 斯坦福 AI 小镇
+```
+
+> 各项目 README 中如标注了特定提交（commit），请按其说明 `git checkout` 到对应版本，以保证复现结果一致。
+> 第 10 章 `use-computer-while-calling` 已发展为持续维护的独立仓库 [19PINE-AI/TalkAct](https://github.com/19PINE-AI/TalkAct)，本仓库仅保留一份指向它的说明文档（`chapter10/use-computer-while-calling/README.md`）。
+
+**依赖真实硬件 / 外部环境的实验（无本仓库代码，指向上游文档）：**
+
+- **实验 9-8 / 9-9 · XLeRobot 遥操作与 LLM Agent 控制**：需 SO-100/XLeRobot 机械臂，按上游文档操作 —— [Teleop](https://xlerobot.readthedocs.io/en/latest/software/getting_started/XLeRobot_teleop.html) · [LLM Agent](https://xlerobot.readthedocs.io/en/latest/software/getting_started/LLM_agent.html)
+- **实验 9-10 · RGB 零样本 Sim2Real 抓取**：[`StoneT2000/lerobot-sim2real`](https://github.com/StoneT2000/lerobot-sim2real)（仿真训练部分可纯 GPU 完成，真实部署需 SO-100 机械臂）
+- **实验 6-11 · OpenVLA + RoboTwin2 仿真评估**：VLA 训练/环境依赖见 `chapter7/SimpleVLA-RL` 的 README（其中说明 OpenVLA、RoboTwin2 的获取与配置）
+
+**读者练习类实验（书中作为练习题给出，复用已文档化的既有项目，无专属目录）：**
+
+- **实验 5-12 · 能创造 Agent 的 Agent**：基于 `chapter5/coding-agent` 自举扩展
+- **实验 6-2 / 6-3 / 6-4 / 6-9**：分别为人肉基准、记忆评估、JSON Cards vs RAG、记忆选型——改造复用第 3 章 `user-memory` / `user-memory-evaluation` / `contextual-retrieval` 等项目
+- **实验 7-8 · Prompt 蒸馏**：落地实现见第 8 章 `chapter8/prompt-distillation`（跨章复用）
+- **实验 7-9 · CoT 蒸馏 `[扩展]`**：书中给出实验设计与验收标准，作为读者扩展实验，暂无专属代码
+
 ## 🤝 贡献
 
-欢迎通过 Pull Request 贡献代码改进、bug 修复或新的示例项目。
+本书与配套代码全部开源，非常欢迎社区通过 Pull Request 参与共建。以下几类贡献我们都非常欢迎：
+
+1. **书籍内容改进**：勘误、补充、更清晰的表述，或新增前沿进展（正文见 `book/chapter*.md`）
+2. **代码改进与 Bug 修复**：让配套项目更健壮、更易用、更贴近生产实践
+3. **新的实践项目**：为某个实验补充/替换更好的实现，或贡献全新的示例项目
+4. **书籍配图的设计改进**：让 `book/images/` 中的图表在设计上更清晰、更美观（配图由 `book/gen_*_figs.py` 生成）
+
+提交前建议先把相关实验亲手跑一遍、确认可复现；也欢迎先提 issue 讨论想法。
 
 ## 📄 许可证
 
