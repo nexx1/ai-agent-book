@@ -75,7 +75,7 @@ python demo.py --base-url https://api.deepseek.com --model deepseek-chat \
 （p50/p95/p99/std/成功率/RPS/聚合吞吐）：
 
 ```bash
-python demo.py --model gpt-4o-mini --concurrency-sweep 1,2,4,8,16 --num-requests 100
+python demo.py --model gpt-5.6-luna --concurrency-sweep 1,2,4,8,16 --num-requests 100
 ```
 
 随着并发上升，单请求延迟长尾（p95/p99/std）通常变差、可用性可能因限流下降，
@@ -122,8 +122,6 @@ python demo.py --mock --concurrency-sweep 1,2,4,8,16     # 合成并发压测表
 | 展示名 | 模型 | base_url | key 环境变量 |
 | --- | --- | --- | --- |
 | OpenAI/gpt-5.6-luna | gpt-5.6-luna | （官方默认，可回退 OpenRouter） | OPENAI_API_KEY |
-| OpenAI/gpt-4o-mini | gpt-4o-mini | （官方默认，可回退 OpenRouter） | OPENAI_API_KEY |
-| OpenAI/gpt-4o | gpt-4o | （官方默认，可回退 OpenRouter） | OPENAI_API_KEY |
 | Moonshot/moonshot-v1-8k | moonshot-v1-8k | https://api.moonshot.cn/v1 | MOONSHOT_API_KEY |
 | Doubao/doubao-1.5-pro-32k | doubao-1-5-pro-32k-250115 | https://ark.cn-beijing.volces.com/api/v3 | ARK_API_KEY |
 
@@ -144,26 +142,25 @@ python demo.py --mock --concurrency-sweep 1,2,4,8,16     # 合成并发压测表
 不同网络/时段会有波动，请以自己跑出的结果为准。
 
 ```
-Provider/Model            | 成功率       | TTFT均值 | TTFT_p95 | 端到端均值 | 端到端p95 | 吞吐     | 输出tok
---------------------------+--------------+----------+----------+------------+-----------+----------+--------
-OpenAI/gpt-4o-mini        | 10/10 (100%) | 1103ms   | 2238ms   | 1.69s      | 3.01s     | 74.4 t/s | 38
-OpenAI/gpt-4o             | 10/10 (100%) | 1059ms   | 1733ms   | 1.55s      | 2.38s     | 88.8 t/s | 36
-Moonshot/moonshot-v1-8k   | 10/10 (100%) | 555ms    | 717ms    | 0.90s      | 1.15s     | 95.5 t/s | 32
-Doubao/doubao-1.5-pro-32k | 10/10 (100%) | 1097ms   | 1487ms   | 2.24s      | 2.64s     | 37.4 t/s | 42
+Provider/Model            | 成功率       | TTFT均值 | TTFT_p95 | 端到端均值 | 端到端p95 | 吞吐      | 输出tok
+--------------------------+--------------+----------+----------+------------+-----------+-----------+--------
+OpenAI/gpt-5.6-luna       | 10/10 (100%) | 1360ms   | 2334ms   | 1.73s      | 2.54s     | 174.9 t/s | 26
+Moonshot/moonshot-v1-8k   | 10/10 (100%) | 530ms    | 671ms    | 0.89s      | 1.07s     | 92.1 t/s  | 32
+Doubao/doubao-1.5-pro-32k | 10/10 (100%) | 1097ms   | 1409ms   | 2.32s      | 2.91s     | 36.2 t/s  | 44
 ```
 
 ## 结论（基于上面这次运行）
 
-- **可用性**：本次四家全部 10/10（100%）成功。可用性差异往往要在更大样本、
+- **可用性**：本次三家全部 10/10（100%）成功。可用性差异往往要在更大样本、
   更高并发或更长时间窗口下才暴露——这正是书中强调"一周每小时探测"的原因。
   代码已把单点失败设计成"记为可用性下降、不中断整表"，便于长时间挂机采样。
-- **首 token 延迟（TTFT）**：本测试机在国内网络下，Kimi 的 TTFT（~555ms）明显低于
-  跨境访问的 OpenAI（~1.1s）；豆包 TTFT 与 OpenAI 相当但端到端更长。
+- **首 token 延迟（TTFT）**：本测试机在国内网络下，Kimi 的 TTFT（~530ms）明显低于
+  跨境访问的 OpenAI/gpt-5.6-luna（~1.36s）；豆包 TTFT（~1.1s）略低于 OpenAI 但端到端更长。
   **TTFT 强依赖网络位置**——同一份代码在美国机房跑，OpenAI 的 TTFT 会大幅下降。
-- **吞吐**：本次 Kimi（95 t/s）≈ gpt-4o（89 t/s）> gpt-4o-mini（74 t/s）> 豆包（37 t/s）。
+- **吞吐**：本次 gpt-5.6-luna（175 t/s）> Kimi（92 t/s）> 豆包（36 t/s）。
   吞吐决定长响应的等待时间，与 TTFT 是两个独立维度。
-- **稳定性（p95）**：看 p95 与均值的差距。gpt-4o-mini 端到端 p95(3.0s)/均值(1.7s) 拉开较大，
-  长尾更重；Kimi 的 p95 与均值最接近，本次最稳。
+- **稳定性（p95）**：看 p95 与均值的差距。gpt-5.6-luna 跨境访问，TTFT p95(2.33s)/均值(1.36s)
+  拉开较大，长尾更重；Kimi 的 p95 与均值最接近，本次最稳。
 - **选型启示**：不存在"全面最优"的一家——延迟、吞吐、可用性、价格是**多维权衡**。
   面向国内用户的实时交互场景，低 TTFT 的本地化服务体验更好；
   批处理/长文本生成则更看重吞吐与单价。**务必在你自己的部署网络环境下实测**，
