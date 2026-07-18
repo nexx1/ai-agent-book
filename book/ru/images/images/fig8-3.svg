@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 620 314" width="620" height="314" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+<rect x="160.0" y="46" width="300" height="52" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="60.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="19" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Запрос пользователя</text>
+<text x="310.0" y="86.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">“Debug этот файл”</text>
+<line x1="310.0" y1="100" x2="310.0" y2="120" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="90.0" y="122" width="440" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="141.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Уровень 1: Семантический поиск на уровне сервера</text>
+<text x="310.0" y="167.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Сотни серверов MCP → Вызов Top-K релевантных серверов</text>
+<line x1="310.0" y1="186" x2="310.0" y2="208" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="90.0" y="210" width="440" height="62" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="229.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Разреженный поиск (BM25)</text>
+<text x="310.0" y="255.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Сопоставление инструментов только на серверах Top-K → Инструменты Top-N</text>
+<line x1="310.0" y1="274" x2="310.0" y2="296" stroke="#333333" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="160.0" y="298" width="300" height="46" rx="6" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="310.0" y="309.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Выбранный инструмент</text>
+<text x="310.0" y="335.0" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="8" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Значительное сужение круга кандидатов, снижение стоимости выбора</text>
+</svg>
