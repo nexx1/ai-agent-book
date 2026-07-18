@@ -26,7 +26,7 @@ def _openrouter_model_id(model) -> str:
     if ml.startswith("claude-"):
         return "anthropic/claude-opus-4.8"
     if ml.startswith("gemini"):
-        return "google/" + m  # e.g. gemini-2.5-pro -> google/gemini-2.5-pro
+        return "google/" + m  # e.g. gemini-3.5-flash -> google/gemini-3.5-flash
     # Provider-native ids (doubao-*/qwen/...) -> a widely-available vision model.
     return "openai/gpt-4o"
 
@@ -73,9 +73,9 @@ class Config:
         
         # Model configurations
         self.models = {
-            "gemini-2.5-pro": ModelConfig(
+            "gemini-3.5-flash": ModelConfig(
                 provider=Provider.GEMINI,
-                model_name="gemini-2.5-pro",
+                model_name="gemini-3.5-flash",
                 api_key=self.gemini_api_key,
                 supports_native_multimodal=True
             ),
@@ -101,7 +101,7 @@ class Config:
         }
         
         # Default settings
-        self.default_model = "gemini-2.5-pro"
+        self.default_model = "gemini-3.5-flash"
         self.default_mode = ExtractionMode.NATIVE
         self.enable_multimodal_tools = False
         

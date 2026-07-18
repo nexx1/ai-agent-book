@@ -40,7 +40,7 @@ async def example_weather():
     
     agent = LearningAgent(
         task="Check the weather forecast for Tokyo",
-        llm=ChatGoogle(model="gemini-2.0-flash-exp"),  # You can use different LLMs
+        llm=ChatGoogle(model="gemini-3.5-flash"),  # You can use different LLMs
         knowledge_base_path="./my_knowledge",
         headless=False
     )
@@ -52,7 +52,7 @@ async def example_weather():
     print("\n   Running again for New York...")
     agent2 = LearningAgent(
         task="Check the weather forecast for New York",
-        llm=ChatGoogle(model="gemini-2.0-flash-exp"),
+        llm=ChatGoogle(model="gemini-3.5-flash"),
         knowledge_base_path="./my_knowledge",
         headless=False
     )

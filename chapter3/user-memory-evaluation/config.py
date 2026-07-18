@@ -16,7 +16,7 @@ def _openrouter_model_id(model) -> str:
         return override
     m = (model or "").strip()
     if not m:
-        return "openai/gpt-4o-mini"
+        return "openai/gpt-5.6-luna"
     if "/" in m:
         return m
     ml = m.lower()
@@ -24,7 +24,10 @@ def _openrouter_model_id(model) -> str:
         return "openai/" + m
     if ml.startswith("claude-"):
         return "anthropic/claude-opus-4.8"
-    return "openai/gpt-4o-mini"
+    if ml.startswith("kimi"):
+        # kimi-k3 is not on OpenRouter; moonshotai/kimi-k2.6 is the closest hosted id.
+        return "moonshotai/kimi-k2.6"
+    return "openai/gpt-5.6-luna"
 
 
 class Config:
@@ -38,7 +41,7 @@ class Config:
     # OpenAI API Settings (alternative)
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     OPENAI_BASE_URL: str = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
-    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o")
+    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
 
     # OpenRouter fallback settings (used when the primary judge key is missing)
     OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
@@ -77,7 +80,11 @@ class Config:
                 "or OPENROUTER_API_KEY (fallback) in .env file."
             )
         elif evaluator == "openai":
-            if cls.OPENAI_API_KEY:
+            # gpt-5.x (incl. gpt-5.6*) needs OpenAI org-verification on the direct
+            # API; when an OpenRouter key is present, prefer routing it through OR.
+            prefer_openrouter = (bool(cls.OPENROUTER_API_KEY)
+                                 and cls.OPENAI_MODEL.lower().startswith("gpt-5"))
+            if cls.OPENAI_API_KEY and not prefer_openrouter:
                 return {
                     "api_key": cls.OPENAI_API_KEY,
                     "base_url": cls.OPENAI_BASE_URL,

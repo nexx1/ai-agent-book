@@ -42,7 +42,7 @@ class RaptorIndexer:
         self.client = OpenAI(api_key=config.openai_api_key, base_url=config.base_url)
         self.embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         try:
-            # OpenRouter-style ids (e.g. "openai/gpt-4o-mini") aren't known to
+            # OpenRouter-style ids (e.g. "openai/gpt-5.6-luna") aren't known to
             # tiktoken; fall back to a general-purpose encoding for token counts.
             self.tokenizer = tiktoken.encoding_for_model(config.model_name)
         except KeyError:

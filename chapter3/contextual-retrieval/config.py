@@ -14,7 +14,7 @@ def _openrouter_model_id(model: Optional[str]) -> str:
         return override
     m = (model or "").strip()
     if not m:
-        return "openai/gpt-4o-mini"
+        return "openai/gpt-5.6-luna"
     if "/" in m:
         return m  # already an OpenRouter-style id (e.g. openai/gpt-4o)
     ml = m.lower()
@@ -22,9 +22,12 @@ def _openrouter_model_id(model: Optional[str]) -> str:
         return "openai/" + m
     if ml.startswith("claude-"):
         return "anthropic/claude-opus-4.8"
+    if ml.startswith("kimi"):
+        # kimi-k3 is not on OpenRouter; moonshotai/kimi-k2.6 is the closest hosted id.
+        return "moonshotai/kimi-k2.6"
     # Provider-native ids (kimi-*/doubao-*/qwen/deepseek-*) not hosted on
     # OpenRouter under the same name -> a widely-available OpenAI chat model.
-    return "openai/gpt-4o-mini"
+    return "openai/gpt-5.6-luna"
 
 
 class Provider(str, Enum):
@@ -123,11 +126,16 @@ class LLMConfig:
         api_key = self.api_key or self.get_api_key(provider_lower)
 
         # Universal OpenRouter fallback: primary provider key absent but
-        # OPENROUTER_API_KEY present -> route through OpenRouter.
-        if not api_key and provider_lower != "openrouter" and os.getenv("OPENROUTER_API_KEY"):
-            model = _openrouter_model_id(self.model or defaults.get("model"))
+        # OPENROUTER_API_KEY present -> route through OpenRouter. Additionally,
+        # gpt-5.x (incl. gpt-5.6*) needs OpenAI org-verification on the direct
+        # API, so prefer OpenRouter for those ids whenever an OR key is present.
+        model_name = self.model or defaults.get("model")
+        openrouter_key = os.getenv("OPENROUTER_API_KEY")
+        prefer_openrouter = bool(openrouter_key) and str(model_name or "").lower().startswith("gpt-5")
+        if (not api_key or prefer_openrouter) and provider_lower != "openrouter" and openrouter_key:
+            model = _openrouter_model_id(model_name)
             return {
-                "api_key": os.getenv("OPENROUTER_API_KEY"),
+                "api_key": openrouter_key,
                 "base_url": "https://openrouter.ai/api/v1",
             }, model
 

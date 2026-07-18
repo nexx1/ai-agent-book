@@ -134,7 +134,7 @@ from config import ExtractionMode
 async def example():
     # Initialize agent
     agent = MultimodalAgent(
-        model="gemini-2.5-pro",
+        model="gemini-3.5-flash",
         mode=ExtractionMode.NATIVE,
         enable_tools=True
     )
@@ -189,7 +189,7 @@ Demo CLI flags:
 |------|-------------|
 | `--file` / positional `file` | Multimodal file to process (image / PDF / audio) |
 | `--query` / positional `query` | Question to ask about the file |
-| `--model` | Model for native/extract modes (default: `gemini-2.5-pro`) |
+| `--model` | Model for native/extract modes (default: `gemini-3.5-flash`) |
 | `--skip-model-comparison` | Only run the three-paradigm comparison |
 | `--generate-sample` | Offline: create the bundled chart sample, then exit |
 | `--output`, `-o` | Also write the full transcript to a file |
@@ -260,7 +260,7 @@ python test_multimodal.py
 ```python
 # Native mode for best understanding
 agent = MultimodalAgent(
-    model="gemini-2.5-pro",
+    model="gemini-3.5-flash",
     mode=ExtractionMode.NATIVE
 )
 
@@ -407,7 +407,7 @@ MIT License - See LICENSE file for details
 This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
 
 - If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `kimi-k3`, `doubao-*`) fall back to `openai/gpt-4o-mini`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
+- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `kimi-k3`, `doubao-*`) fall back to `openai/gpt-4o`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
 - Else a clear error lists the accepted keys.
 
 Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.

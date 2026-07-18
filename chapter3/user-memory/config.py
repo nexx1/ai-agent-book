@@ -27,7 +27,7 @@ def openrouter_model_id(model) -> str:
         return override
     m = (model or "").strip()
     if not m:
-        return "openai/gpt-4o-mini"
+        return "openai/gpt-5.6-luna"
     if "/" in m:
         return m  # already an OpenRouter-style id (e.g. openai/gpt-4o)
     ml = m.lower()
@@ -35,9 +35,12 @@ def openrouter_model_id(model) -> str:
         return "openai/" + m
     if ml.startswith("claude-"):
         return "anthropic/claude-opus-4.8"
+    if ml.startswith("kimi"):
+        # kimi-k3 is not on OpenRouter; moonshotai/kimi-k2.6 is the closest hosted id.
+        return "moonshotai/kimi-k2.6"
     # Provider-native ids (kimi-*/doubao-*/qwen/deepseek-*) not hosted on
     # OpenRouter under the same name -> a widely-available OpenAI chat model.
-    return "openai/gpt-4o-mini"
+    return "openai/gpt-5.6-luna"
 
 
 # Default model per provider, used to map onto an OpenRouter model id when the

@@ -255,8 +255,8 @@ async def main():
     )
     parser.add_argument("--mode", choices=["native", "extract_to_text"], default="native",
                        help="提取模式：native（原生多模态）或 extract_to_text（提取为文本），默认 native")
-    parser.add_argument("--model", default="gemini-2.5-pro",
-                       help="使用的模型（默认：gemini-2.5-pro）")
+    parser.add_argument("--model", default="gemini-3.5-flash",
+                       help="使用的模型（默认：gemini-3.5-flash）")
     parser.add_argument("--tools", action="store_true",
                        help="启用多模态分析工具（analyze_image / analyze_audio / analyze_pdf）")
     parser.add_argument("--file", help="要处理的单个文件（图像 / PDF 文档 / 音频）")

@@ -204,7 +204,7 @@ class MultimodalTools:
         )
         
         response = client.models.generate_content(
-            model='gemini-2.5-pro',
+            model='gemini-3.5-flash',
             contents=[
                 query,
                 types.Part.from_bytes(
@@ -258,7 +258,7 @@ class MultimodalTools:
         )
         
         response = client.models.generate_content(
-            model='gemini-2.5-pro',
+            model='gemini-3.5-flash',
             contents=[
                 types.Part.from_bytes(
                     data=pdf_data,
@@ -496,7 +496,7 @@ class MultimodalAgent:
         )
             
         response = client.models.generate_content(
-            model='gemini-2.5-pro',
+            model='gemini-3.5-flash',
             contents=contents,
             config=config
         )
@@ -620,7 +620,7 @@ class MultimodalAgent:
         )
         
         response = client.models.generate_content(
-            model='gemini-2.5-pro',
+            model='gemini-3.5-flash',
             contents=[
                 types.Part.from_bytes(
                     data=pdf_data,
@@ -737,7 +737,7 @@ class MultimodalAgent:
             )
             
             response = client.models.generate_content(
-                model='gemini-2.5-pro',
+                model='gemini-3.5-flash',
                 contents=[
                     "Transcribe this audio content completely and accurately.",
                     types.Part.from_bytes(

@@ -20,7 +20,7 @@ def _openrouter_model_id(model) -> str:
         return override
     m = (model or "").strip()
     if not m:
-        return "openai/gpt-4o-mini"
+        return "openai/gpt-5.6-luna"
     if "/" in m:
         return m
     ml = m.lower()
@@ -28,7 +28,10 @@ def _openrouter_model_id(model) -> str:
         return "openai/" + m
     if ml.startswith("claude-"):
         return "anthropic/claude-opus-4.8"
-    return "openai/gpt-4o-mini"
+    if ml.startswith("kimi"):
+        # kimi-k3 is not on OpenRouter; moonshotai/kimi-k2.6 is the closest hosted id.
+        return "moonshotai/kimi-k2.6"
+    return "openai/gpt-5.6-luna"
 
 
 def _resolve_llm(api_key: str, *models):
@@ -36,9 +39,14 @@ def _resolve_llm(api_key: str, *models):
     absent but OPENROUTER_API_KEY is present, route the chat LLM (used for
     RAPTOR summarization / GraphRAG entity extraction) through OpenRouter.
     Embeddings here are local SentenceTransformers, so they are unaffected."""
-    if not api_key and os.getenv("OPENROUTER_API_KEY"):
+    openrouter_key = os.getenv("OPENROUTER_API_KEY")
+    # gpt-5.x (incl. gpt-5.6*) needs OpenAI org-verification on the direct API;
+    # when an OpenRouter key is present, prefer routing these ids through it.
+    prefer_openrouter = bool(openrouter_key) and any(
+        str(m or "").lower().startswith("gpt-5") for m in models)
+    if (not api_key or prefer_openrouter) and openrouter_key:
         base_url = "https://openrouter.ai/api/v1"
-        return (os.getenv("OPENROUTER_API_KEY"), base_url,
+        return (openrouter_key, base_url,
                 *[_openrouter_model_id(m) for m in models])
     return (api_key, None, *models)
 
@@ -47,7 +55,7 @@ def _resolve_llm(api_key: str, *models):
 class RaptorConfig:
     """Configuration for RAPTOR tree-based indexing."""
     openai_api_key: str
-    model_name: str = "gpt-4o-mini"
+    model_name: str = "gpt-5.6-luna"
     embedding_model: str = "text-embedding-3-small"
     max_tokens: int = 2048
     temperature: float = 0.1
@@ -63,13 +71,13 @@ class RaptorConfig:
 class GraphRAGConfig:
     """Configuration for GraphRAG graph-based indexing."""
     llm_api_key: str
-    llm_model: str = "gpt-4o-mini"
+    llm_model: str = "gpt-5.6-luna"
     embedding_model: str = "text-embedding-3-small"
     chunk_size: int = 1200
     chunk_overlap: int = 100
     max_knowledge_triples: int = 10
     community_detection_algorithm: str = "leiden"
-    summarization_model: str = "gpt-4o-mini"
+    summarization_model: str = "gpt-5.6-luna"
     index_dir: Path = Path("indexes/graphrag")
     cache_dir: Path = Path("cache/graphrag")
     base_url: Optional[str] = None
@@ -89,7 +97,7 @@ def get_raptor_config() -> RaptorConfig:
     """Get RAPTOR configuration from environment."""
     api_key, base_url, model_name = _resolve_llm(
         os.getenv("OPENAI_API_KEY", ""),
-        os.getenv("RAPTOR_MODEL", "gpt-4o-mini"),
+        os.getenv("RAPTOR_MODEL", "gpt-5.6-luna"),
     )
     return RaptorConfig(
         openai_api_key=api_key,
@@ -109,8 +117,8 @@ def get_graphrag_config() -> GraphRAGConfig:
     """Get GraphRAG configuration from environment."""
     api_key, base_url, llm_model, summ_model = _resolve_llm(
         os.getenv("OPENAI_API_KEY", ""),
-        os.getenv("GRAPHRAG_MODEL", "gpt-4o-mini"),
-        os.getenv("GRAPHRAG_SUMMARY_MODEL", "gpt-4o-mini"),
+        os.getenv("GRAPHRAG_MODEL", "gpt-5.6-luna"),
+        os.getenv("GRAPHRAG_SUMMARY_MODEL", "gpt-5.6-luna"),
     )
     return GraphRAGConfig(
         llm_api_key=api_key,

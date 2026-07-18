@@ -28,7 +28,7 @@ class _Tee:
         self._file.flush()
 
 
-async def compare_extraction_modes(file_path: str, query: str, model: str = "gemini-2.5-pro"):
+async def compare_extraction_modes(file_path: str, query: str, model: str = "gemini-3.5-flash"):
     """Compare different extraction modes for the same content"""
     
     print(f"\n{'='*80}")
@@ -161,7 +161,7 @@ async def compare_models(file_path: str, query: str):
     content = MultimodalContent(type=content_type, path=file_path)
     
     # Test with different models
-    models = ["gemini-2.5-pro", "gpt-4o", "doubao-1.6"]
+    models = ["gemini-3.5-flash", "gpt-4o", "doubao-1.6"]
     
     for model in models:
         print("\n" + "-"*60)
@@ -173,7 +173,7 @@ async def compare_models(file_path: str, query: str):
             from config import Config
             config = Config()
             
-            if model == "gemini-2.5-pro" and not config.gemini_api_key:
+            if model == "gemini-3.5-flash" and not config.gemini_api_key:
                 print("Skipping: Gemini API key not configured")
                 continue
             elif model in ["gpt-4o", "gpt-5"] and not config.openai_api_key:
@@ -185,7 +185,7 @@ async def compare_models(file_path: str, query: str):
             
             agent = MultimodalAgent(
                 model=model,
-                mode=ExtractionMode.NATIVE if content_type != "audio" or model == "gemini-2.5-pro" else ExtractionMode.EXTRACT_TO_TEXT,
+                mode=ExtractionMode.NATIVE if content_type != "audio" or model == "gemini-3.5-flash" else ExtractionMode.EXTRACT_TO_TEXT,
                 enable_tools=False
             )
             
@@ -204,7 +204,7 @@ async def demo_conversation_with_tools():
     print(f"{'='*80}\n")
     
     agent = MultimodalAgent(
-        model="gemini-2.5-pro",
+        model="gemini-3.5-flash",
         mode=ExtractionMode.EXTRACT_TO_TEXT,
         enable_tools=True
     )
@@ -267,8 +267,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="向该文件提出的问题（等价于位置参数 query）",
     )
     parser.add_argument(
-        "--model", default="gemini-2.5-pro",
-        help="原生 / 提取模式使用的模型（默认：gemini-2.5-pro）",
+        "--model", default="gemini-3.5-flash",
+        help="原生 / 提取模式使用的模型（默认：gemini-3.5-flash）",
     )
     parser.add_argument(
         "--skip-model-comparison", action="store_true",

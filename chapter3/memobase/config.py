@@ -18,7 +18,7 @@ def _openrouter_model_id(model) -> str:
         return override
     m = (model or "").strip()
     if not m:
-        return "openai/gpt-4o-mini"
+        return "openai/gpt-5.6-luna"
     if "/" in m:
         return m
     ml = m.lower()
@@ -26,7 +26,10 @@ def _openrouter_model_id(model) -> str:
         return "openai/" + m
     if ml.startswith("claude-"):
         return "anthropic/claude-opus-4.8"
-    return "openai/gpt-4o-mini"
+    if ml.startswith("kimi"):
+        # kimi-k3 is not on OpenRouter; moonshotai/kimi-k2.6 is the closest hosted id.
+        return "moonshotai/kimi-k2.6"
+    return "openai/gpt-5.6-luna"
 
 
 # Kimi K3 Model Configuration

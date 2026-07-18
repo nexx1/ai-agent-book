@@ -112,8 +112,8 @@ class ConversationalAgent:
                 base_url="https://openrouter.ai/api/v1"
             )
             # Default to Gemini 2.5 Pro, but allow any of the supported models
-            self.model = model or "google/gemini-2.5-pro"
-            # Supported models: google/gemini-2.5-pro, openai/gpt-5, anthropic/claude-sonnet-4
+            self.model = model or "google/gemini-3.5-flash"
+            # Supported models: google/gemini-3.5-flash, openai/gpt-5, anthropic/claude-sonnet-4
         else:
             raise ValueError(f"Unsupported provider: {self.provider}. Use 'siliconflow', 'doubao', 'kimi', 'moonshot', or 'openrouter'")
         
