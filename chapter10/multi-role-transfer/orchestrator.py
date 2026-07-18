@@ -49,7 +49,7 @@ class MultiRoleOrchestrator:
     def __init__(
         self,
         client: OpenAI,
-        model: str = "gpt-4o-mini",
+        model: str = "gpt-5.6-luna",
         max_steps: int = 20,
         verbose: bool = True,
         start_role: str = DEFAULT_ROLE,

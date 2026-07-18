@@ -21,21 +21,46 @@ from openai import OpenAI
 
 
 # ----------------------------------------------------------------------------
-# 配置：model / base_url 可通过环境变量覆盖，默认 gpt-4o-mini
+# 配置：model / base_url 可通过环境变量覆盖，默认当前便宜旗舰 gpt-5.6-luna
 # ----------------------------------------------------------------------------
-MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
 BASE_URL = os.environ.get("OPENAI_BASE_URL")  # 可选，兼容自建/代理端点
 
 
+def _to_openrouter_model(model: str) -> str:
+    """把模型名映射到 OpenRouter 命名空间（用于无 OPENAI_API_KEY 的回退路径）。"""
+    if "/" in model:
+        return model                      # 已是 OpenRouter 命名空间，原样使用
+    if model.startswith("gpt-"):
+        return "openai/" + model          # gpt-* -> openai/gpt-*
+    if model.startswith("claude-"):
+        return "anthropic/claude-opus-4.8"
+    return "openai/gpt-5.6-luna"          # 兜底：当前便宜旗舰
+
+
 def get_client() -> OpenAI:
-    """创建 OpenAI 客户端，只使用 OPENAI_API_KEY。"""
+    """创建 LLM 客户端。
+
+    通用回退策略：
+      1) 有 OPENAI_API_KEY -> 直连 OpenAI（尊重可选的 OPENAI_BASE_URL）；
+      2) 否则有 OPENROUTER_API_KEY -> 自动改走 OpenRouter 网关，并把 MODEL
+         映射到 OpenRouter 命名空间（如 gpt-5.6-luna -> openai/gpt-5.6-luna）；
+      3) 都没有则报清晰错误。
+    """
+    global MODEL
     api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("未设置 OPENAI_API_KEY，请参考 env.example 配置。")
-    kwargs = {"api_key": api_key}
-    if BASE_URL:
-        kwargs["base_url"] = BASE_URL
-    return OpenAI(**kwargs)
+    if api_key:
+        kwargs = {"api_key": api_key}
+        if BASE_URL:
+            kwargs["base_url"] = BASE_URL
+        return OpenAI(**kwargs)
+    or_key = os.environ.get("OPENROUTER_API_KEY")
+    if or_key:
+        MODEL = _to_openrouter_model(MODEL)
+        return OpenAI(api_key=or_key, base_url="https://openrouter.ai/api/v1")
+    raise RuntimeError(
+        "未设置 OPENAI_API_KEY 或 OPENROUTER_API_KEY，请参考 env.example 配置。"
+    )
 
 
 # tiktoken 编码器：用于统计“未真正发给模型”的上下文（如 Manager 状态）token 数
@@ -52,6 +77,17 @@ def _slug(name: str) -> str:
     if m:
         return f"chapter{m.group(1)}"
     return re.sub(r"[^0-9a-zA-Z]+", "_", name).strip("_").lower() or "chapter"
+
+
+def _loads_lenient(content: str):
+    """容错解析 JSON：兼容个别模型把 JSON 包在 ```json ... ``` 代码围栏里的情况。"""
+    s = (content or "").strip()
+    if s.startswith("```"):
+        s = s.split("\n", 1)[-1] if "\n" in s else s
+        s = s.rsplit("```", 1)[0].strip()
+        if s.lower().startswith("json"):
+            s = s[4:].strip()
+    return json.loads(s)
 
 
 def count_tokens(text: str) -> int:
@@ -190,7 +226,7 @@ def glossary_agent(client, tracker, book_text, source_lang="英文", target_lang
     content = llm_chat(
         client, tracker, "Glossary", messages, json_mode=True, note="抽取术语表"
     )
-    data = json.loads(content)
+    data = _loads_lenient(content)
     return data.get("glossary", [])
 
 
@@ -254,7 +290,7 @@ def proofreading_agent(client, tracker, translations, glossary, target_lang="中
     content = llm_chat(
         client, tracker, "Proofreading", messages, json_mode=True, note="一致性审校"
     )
-    return json.loads(content)
+    return _loads_lenient(content)
 
 
 def manager_decision(client, tracker, task, file_index, report):
@@ -280,7 +316,7 @@ def manager_decision(client, tracker, task, file_index, report):
     content = llm_chat(
         client, tracker, "Manager", messages, json_mode=True, note="调度决策"
     )
-    return json.loads(content)
+    return _loads_lenient(content)
 
 
 # ============================================================================

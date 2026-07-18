@@ -22,21 +22,47 @@ from typing import List, Optional
 from .roles import Role, ROLE_STRATEGY, faction_of
 
 
-# 全局唯一的 OpenAI 客户端。读取 OPENAI_API_KEY；模型默认 gpt-4o-mini。
-# 注意：按实验约束，只用 OpenAI，不用 OPENROUTER/ANTHROPIC/DEEPSEEK/SILICONFLOW。
-_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+# 全局唯一的 LLM 客户端。模型默认当前便宜旗舰 gpt-5.6-luna。
+# 通用回退：优先 OPENAI_API_KEY 直连 OpenAI；没有则用 OPENROUTER_API_KEY 走 OpenRouter。
+_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
 _client = None
 
 
+def _to_openrouter_model(model: str) -> str:
+    """把模型名映射到 OpenRouter 命名空间（用于无 OPENAI_API_KEY 的回退路径）。"""
+    if "/" in model:
+        return model                      # 已是 OpenRouter 命名空间，原样使用
+    if model.startswith("gpt-"):
+        return "openai/" + model          # gpt-* -> openai/gpt-*
+    if model.startswith("claude-"):
+        return "anthropic/claude-opus-4.8"
+    return "openai/gpt-5.6-luna"          # 兜底：当前便宜旗舰
+
+
 def get_client():
-    """返回全局共享的 OpenAI 客户端（懒加载，进程内单例）。
+    """返回全局共享的 LLM 客户端（懒加载，进程内单例）。
 
     仅在线模式（真实调用 LLM）才会用到；离线模式不导入 openai、不构造客户端。
+      1) 有 OPENAI_API_KEY -> 直连 OpenAI；
+      2) 否则有 OPENROUTER_API_KEY -> 走 OpenRouter，并把 _MODEL 映射到其命名空间；
+      3) 都没有则报清晰错误。
     """
-    global _client
+    global _client, _MODEL
     if _client is None:
         from openai import OpenAI  # 懒导入：离线模式无需安装 openai
-        _client = OpenAI()  # 自动读取环境变量 OPENAI_API_KEY
+        if os.environ.get("OPENAI_API_KEY"):
+            _client = OpenAI()  # 自动读取环境变量 OPENAI_API_KEY
+        elif os.environ.get("OPENROUTER_API_KEY"):
+            _MODEL = _to_openrouter_model(_MODEL)
+            _client = OpenAI(
+                api_key=os.environ["OPENROUTER_API_KEY"],
+                base_url="https://openrouter.ai/api/v1",
+            )
+        else:
+            raise RuntimeError(
+                "未设置 OPENAI_API_KEY 或 OPENROUTER_API_KEY，请参考 env.example 配置，"
+                "或改用离线模式：python demo.py --offline"
+            )
     return _client
 
 
@@ -88,12 +114,15 @@ class PlayerAgent:
                 f"【你目前掌握的信息（仅你可见）】\n{self._context_block()}\n\n"
                 f"【当前任务】\n{instruction}"},
         ]
+        # 给推理型模型（如 gpt-5.6 系列）留足输出预算：其内部推理 token 也计入
+        # max_tokens，预算过小会导致 content 被截断为空。设一个下限兜底。
         kwargs = dict(model=_MODEL, messages=messages, temperature=0.8,
-                      max_tokens=max_tokens)
+                      max_tokens=max(max_tokens, 512))
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
         resp = get_client().chat.completions.create(**kwargs)
-        return resp.choices[0].message.content.strip()
+        # content 可能为 None（如被截断）；用空串兜底，交由上层解析做降级处理。
+        return (resp.choices[0].message.content or "").strip()
 
     # ---------- 三种对外能力：发言 / 决策（选目标）/ 投票 ----------
 

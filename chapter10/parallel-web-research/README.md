@@ -70,12 +70,16 @@ python demo.py
 cp env.example .env
 # 在 .env 填入 OPENAI_API_KEY（也支持 Moonshot / 火山方舟 ARK 的 OpenAI 兼容网关）
 python demo.py
-# 或不改 .env，直接用命令行开关（仍需配置 OPENAI_API_KEY 才会真正生效）：
-python demo.py --use-llm --model gpt-4o-mini
+# 或不改 .env，直接用命令行开关（仍需配置 key 才会真正生效）：
+python demo.py --use-llm --model gpt-5.6-luna
 ```
 
-可用 key：`OPENAI_API_KEY` / `MOONSHOT_API_KEY` / `ARK_API_KEY`（填到 `OPENAI_API_KEY`
-并按需设置 `OPENAI_BASE_URL`、`OPENAI_MODEL`）。不影响协调机制，仅改变"是否命中"的判断。
+可用 key：`OPENAI_API_KEY`（默认模型 `gpt-5.6-luna`）/ `MOONSHOT_API_KEY` / `ARK_API_KEY`
+（填到 `OPENAI_API_KEY` 并按需设置 `OPENAI_BASE_URL`、`OPENAI_MODEL`）。
+
+**通用回退**：若未设置 `OPENAI_API_KEY` 但设了 `OPENROUTER_API_KEY`，则真实 LLM 判断
+自动改走 OpenRouter，并把模型名映射到其命名空间（`gpt-5.6-luna` → `openai/gpt-5.6-luna`）。
+不影响协调机制，仅改变"是否命中"的判断。
 
 ### 命令行参数
 
@@ -89,7 +93,7 @@ python demo.py --use-llm --model gpt-4o-mini
 | `--model MODEL` | LLM 模型名（等价于设 `OPENAI_MODEL`，仅 `--use-llm` 且配置 key 时生效） | 环境变量 |
 | `-o, --output PATH` | 把结论（含并行/串行耗时、winner、竞态统计）写入 JSON 文件 | 不写 |
 | `--compare` | 并行跑完后再**实测**一遍串行基线，打印墙钟耗时对比 | 关闭 |
-| `--use-llm` | 强制真实 LLM 判断（仍需配 `OPENAI_API_KEY`，否则自动回退离线判断） | 关闭 |
+| `--use-llm` | 强制真实 LLM 判断（仍需配 `OPENAI_API_KEY` 或 `OPENROUTER_API_KEY`，否则自动回退离线判断） | 关闭 |
 | `--quiet` | 减少逐条 BUS 日志（状态表/结论/自检不受影响） | 关闭 |
 
 ```bash

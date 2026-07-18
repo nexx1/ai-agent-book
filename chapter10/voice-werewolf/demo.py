@@ -5,7 +5,7 @@
 配套《深入理解 AI Agent》第 10 章「实验 10-8：语音狼人杀 Agent 系统」。
 
 本 demo 演示三件事（对应书中架构设计）：
-1. **多 Agent**：每个玩家 = 一个独立 LLM Agent（OpenAI，默认 gpt-4o-mini）。
+1. **多 Agent**：每个玩家 = 一个独立 LLM Agent（OpenAI，默认 gpt-5.6-luna）。
 2. **信息权限控制**：法官按角色把信息投递进各 Agent 的私有上下文——狼人才知道
    队友、预言家才知道查验结果、公开发言进所有人。游戏后打印审计表 + 自动校验，
    客观证明信息隔离正确。
@@ -147,7 +147,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-rounds", type=int, default=6, dest="max_rounds",
                         help="昼夜循环的最大回合数上限（默认 6）")
     parser.add_argument("--model", type=str, default=None,
-                        help="覆盖 LLM 模型（默认 gpt-4o-mini，仅在线模式有效）")
+                        help="覆盖 LLM 模型（默认 gpt-5.6-luna，仅在线模式有效）")
     parser.add_argument("--voice", action="store_true",
                         help="用 OpenAI tts-1 把公开发言合成语音（需 API Key；默认关，即纯文本模式）")
     parser.add_argument("--play", action="store_true",
@@ -165,7 +165,7 @@ def run_game(args):
     roles_note = "" if args.wolves is None else f"（狼人数={args.wolves}）"
     print("=" * 78)
     print("实验 10-8：语音狼人杀 Agent 系统")
-    print(f"模式：{mode} | 模型：{os.environ.get('OPENAI_MODEL', 'gpt-4o-mini') if not args.offline else '—'} | "
+    print(f"模式：{mode} | 模型：{os.environ.get('OPENAI_MODEL', 'gpt-5.6-luna') if not args.offline else '—'} | "
           f"种子：{args.seed} | 语音：{'开' if args.voice else '关（文本模式）'}")
     print(f"配置：{args.players} 人局{roles_note} | 最大回合：{args.max_rounds}")
     print("=" * 78)
@@ -192,10 +192,16 @@ def main():
     args = build_parser().parse_args()
 
     # 在线模式（LLM 决策 / 语音合成）才需要 API Key；离线模式不需要。
-    if (not args.offline or args.voice) and not os.environ.get("OPENAI_API_KEY"):
-        need = "语音合成（--voice）" if args.offline else "LLM 决策"
-        print(f"错误：{need} 需要 OPENAI_API_KEY。请先 export OPENAI_API_KEY=sk-...（见 env.example），"
-              f"或改用离线模式：python demo.py --offline")
+    # LLM 决策支持 OPENAI_API_KEY 或（回退）OPENROUTER_API_KEY；语音合成（--voice，
+    # OpenAI tts-1）目前只支持 OPENAI_API_KEY，OpenRouter 无 TTS 端点。
+    has_llm_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENROUTER_API_KEY")
+    if args.voice and not os.environ.get("OPENAI_API_KEY"):
+        print("错误：语音合成（--voice，OpenAI tts-1）需要 OPENAI_API_KEY。"
+              "请先 export OPENAI_API_KEY=sk-...（见 env.example），或去掉 --voice 跑纯文本模式。")
+        sys.exit(1)
+    if not args.offline and not has_llm_key:
+        print("错误：LLM 决策需要 OPENAI_API_KEY 或 OPENROUTER_API_KEY。"
+              "请先 export（见 env.example），或改用离线模式：python demo.py --offline")
         sys.exit(1)
 
     log_file = None

@@ -60,8 +60,13 @@ python demo.py
 ```
 
 可配环境变量（均有默认值）：
-`OPENAI_API_KEY`（必填）、`OPENAI_BASE_URL`（默认 `https://api.openai.com/v1`）、
-`OPENAI_MODEL`（默认 `gpt-4o-mini`）。
+`OPENAI_API_KEY`、`OPENAI_BASE_URL`（默认 `https://api.openai.com/v1`）、
+`OPENAI_MODEL`（默认 `gpt-5.6-luna`）。
+
+**通用回退**：优先用 `OPENAI_API_KEY` 直连 OpenAI；若未设置该变量但设了
+`OPENROUTER_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
+（`gpt-5.6-luna` → `openai/gpt-5.6-luna`）。提示：`gpt-5.6` 系列直连 OpenAI 需组织验证，
+只填 `OPENROUTER_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
 
 ### 命令行参数
 
@@ -142,7 +147,7 @@ triage → research → data_analysis → writing
 
 ## 局限
 
-- 默认模型为 `gpt-4o-mini`；移交是否按预期链路发生，很大程度依赖所选模型的指令遵循能力，换模型效果可能不同。
+- 默认模型为 `gpt-5.6-luna`；移交是否按预期链路发生，很大程度依赖所选模型的指令遵循能力，换模型效果可能不同。
 - `research` 角色的 `web_search` 是**内置知识库 mock**，并非真实联网检索，仅能命中预置的少量关键词（新能源汽车销量、光伏装机、Python GIL），换查询词可能查不到。
 - 真实 LLM 输出存在随机性：具体移交步数、每次 `reason` 的措辞、是否途经 `coding` 角色等，不同次运行可能不同，但移交机制本身一致。
 - `orchestrator.py` 设有 `max_steps`（默认 20）硬上限，以及「同一 (角色, 工具, 参数) 连续调用 ≥3 次」的纠偏提示，用于防止模型死循环；这是兜底保护，不代表每次运行都会用满这些步数。

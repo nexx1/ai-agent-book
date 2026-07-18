@@ -56,7 +56,7 @@ def _parse_args() -> argparse.Namespace:
             "  python demo.py --agents 6          # 改为 6 个并行 Agent\n"
             "  python demo.py --compare           # 额外实测并行 vs 串行的墙钟耗时\n"
             "  python demo.py --output result.json  # 把结论写入 JSON 文件\n"
-            "  python demo.py --use-llm --model gpt-4o-mini  # 用真实 LLM 判断（需配 key）"
+            "  python demo.py --use-llm --model gpt-5.6-luna  # 用真实 LLM 判断（需配 key）"
         ),
     )
     parser.add_argument(
@@ -81,7 +81,7 @@ def _parse_args() -> argparse.Namespace:
         default=None,
         metavar="MODEL",
         help="LLM 模型名（等价于设置环境变量 OPENAI_MODEL；仅在 --use-llm 且配置了 "
-        "OPENAI_API_KEY 时生效）。默认沿用环境变量或 gpt-4o-mini。",
+        "OPENAI_API_KEY 或 OPENROUTER_API_KEY 时生效）。默认沿用环境变量或 gpt-5.6-luna。",
     )
     parser.add_argument(
         "-o",

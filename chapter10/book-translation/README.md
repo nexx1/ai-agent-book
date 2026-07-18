@@ -54,8 +54,11 @@ python demo.py
 Glossary → 逐章 Translation → Proofreading → 依报告决定修订），再打印各 Agent 的
 token 消耗与管理者模式 vs 单 Agent 的核心对比表。
 
-- 只使用 `OPENAI_API_KEY`。模型默认 `gpt-4o-mini`（成本低），可用 `OPENAI_MODEL`
-  覆盖；如需自建/代理端点，设 `OPENAI_BASE_URL`。
+- 模型默认 `gpt-5.6-luna`（当前便宜旗舰），可用 `OPENAI_MODEL` 覆盖；如需自建/代理端点，设 `OPENAI_BASE_URL`。
+- **Key 与通用回退**：优先用 `OPENAI_API_KEY` 直连 OpenAI；若未设置该变量但设了
+  `OPENROUTER_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
+  （`gpt-5.6-luna` → `openai/gpt-5.6-luna`）。提示：`gpt-5.6` 系列直连 OpenAI 需组织验证，
+  只填 `OPENROUTER_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
 - 任务规模刻意很小（4 个短章节），一次运行成本约几百分之一美元。
 - 不带任何参数运行与旧版行为完全一致。
 
@@ -69,7 +72,7 @@ token 消耗与管理者模式 vs 单 Agent 的核心对比表。
 | `--source-lang LANG` / `--target-lang LANG` | 源 / 目标语言（仅影响提示词措辞） | `英文` / `中文` |
 | `--no-glossary` | 关闭 Glossary Agent（仅保留编辑部指定术语） | 启用 |
 | `--no-proofreading` | 关闭 Proofreading Agent 与 Manager 修订闭环 | 启用 |
-| `--model MODEL` | 临时覆盖模型（等价于设 `OPENAI_MODEL`） | `gpt-4o-mini` |
+| `--model MODEL` | 临时覆盖模型（等价于设 `OPENAI_MODEL`） | `gpt-5.6-luna` |
 | `--skip-single` | 只跑管理者模式，跳过单 Agent 对照组 | 关闭 |
 
 > 注意：内置的术语一致性 / 遵从率统计（`consistency.py`）针对 **英文→中文** 调校；

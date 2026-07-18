@@ -95,7 +95,7 @@ def parse_args():
     run.add_argument(
         "--model", default=None, metavar="MODEL",
         help="覆盖使用的模型（等价于设置 OPENAI_MODEL 环境变量）。"
-             "默认沿用 OPENAI_MODEL 环境变量，缺省为 gpt-4o-mini。",
+             "默认沿用 OPENAI_MODEL 环境变量，缺省为 gpt-5.6-luna。",
     )
     run.add_argument(
         "--skip-single", action="store_true",
@@ -256,9 +256,9 @@ def main():
     import agents
     import consistency
 
-    if not os.environ.get("OPENAI_API_KEY"):
-        print("错误：未设置 OPENAI_API_KEY。请先 `export OPENAI_API_KEY=...` "
-              "或复制 env.example 为 .env 并填写（见 env.example）。\n"
+    if not os.environ.get("OPENAI_API_KEY") and not os.environ.get("OPENROUTER_API_KEY"):
+        print("错误：未设置 OPENAI_API_KEY 或 OPENROUTER_API_KEY。请先 `export OPENAI_API_KEY=...`"
+              "（或 OPENROUTER_API_KEY）或复制 env.example 为 .env 并填写（见 env.example）。\n"
               "提示：想在不联网、无 Key 的情况下查看四 Agent 协作结构，可运行 "
               "`python demo.py --dry-run`。", file=sys.stderr)
         sys.exit(1)

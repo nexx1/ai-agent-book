@@ -20,6 +20,28 @@ from typing import Optional
 from sources import keyword_judge
 
 
+def _to_openrouter_model(model: str) -> str:
+    """把模型名映射到 OpenRouter 命名空间（用于无 OPENAI_API_KEY 的回退路径）。"""
+    if "/" in model:
+        return model                      # 已是 OpenRouter 命名空间，原样使用
+    if model.startswith("gpt-"):
+        return "openai/" + model          # gpt-* -> openai/gpt-*
+    if model.startswith("claude-"):
+        return "anthropic/claude-opus-4.8"
+    return "openai/gpt-5.6-luna"          # 兜底：当前便宜旗舰
+
+
+def _loads_lenient(content: str):
+    """容错解析 JSON：兼容个别模型把 JSON 包在 ```json ... ``` 代码围栏里的情况。"""
+    s = (content or "").strip()
+    if s.startswith("```"):
+        s = s.split("\n", 1)[-1] if "\n" in s else s
+        s = s.rsplit("```", 1)[0].strip()
+        if s.lower().startswith("json"):
+            s = s[4:].strip()
+    return json.loads(s)
+
+
 def llm_available() -> bool:
     """是否具备调用真实 LLM 的条件。
 
@@ -27,10 +49,12 @@ def llm_available() -> bool:
     而不是 LLM 的检索质量。为保证演示**可复现**（只有真正包含答案的源才命中，
     从而稳定触发竞态与级联终止），默认走确定性的关键词判断。
     只有显式设置 USE_LLM=1 时才启用真实 LLM 判断（可能对 mock 源产生幻觉，仅供体验）。
+
+    Key 解析：优先 OPENAI_API_KEY；没有则回退 OPENROUTER_API_KEY（走 OpenRouter）。
     """
     if os.getenv("USE_LLM", "").lower() not in ("1", "true", "yes"):
         return False
-    return bool(os.getenv("OPENAI_API_KEY"))
+    return bool(os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY"))
 
 
 async def judge_answer(question: str, text: str) -> Optional[str]:
@@ -45,11 +69,19 @@ async def judge_answer(question: str, text: str) -> Optional[str]:
         # 延迟导入，避免没装 openai 时影响关键词路径
         from openai import AsyncOpenAI
 
-        client = AsyncOpenAI(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            base_url=os.getenv("OPENAI_BASE_URL") or None,
-        )
-        model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        model = os.getenv("OPENAI_MODEL", "gpt-5.6-luna")
+        # 通用回退：优先直连 OPENAI_API_KEY；否则用 OPENROUTER_API_KEY 走 OpenRouter。
+        if os.getenv("OPENAI_API_KEY"):
+            client = AsyncOpenAI(
+                api_key=os.getenv("OPENAI_API_KEY"),
+                base_url=os.getenv("OPENAI_BASE_URL") or None,
+            )
+        else:
+            client = AsyncOpenAI(
+                api_key=os.getenv("OPENROUTER_API_KEY"),
+                base_url="https://openrouter.ai/api/v1",
+            )
+            model = _to_openrouter_model(model)
         prompt = (
             f"问题：{question}\n\n"
             f"网页内容：{text}\n\n"
@@ -65,7 +97,7 @@ async def judge_answer(question: str, text: str) -> Optional[str]:
             temperature=0,
             response_format={"type": "json_object"},
         )
-        data = json.loads(resp.choices[0].message.content)
+        data = _loads_lenient(resp.choices[0].message.content)
         if data.get("found"):
             return data.get("answer") or text
         return None

@@ -28,6 +28,17 @@ from openai import OpenAI
 from roles import ROLES, DEFAULT_ROLE
 from orchestrator import MultiRoleOrchestrator, C
 
+
+def _to_openrouter_model(model: str) -> str:
+    """把模型名映射到 OpenRouter 命名空间（用于无 OPENAI_API_KEY 的回退路径）。"""
+    if "/" in model:
+        return model                      # 已是 OpenRouter 命名空间，原样使用
+    if model.startswith("gpt-"):
+        return "openai/" + model          # gpt-* -> openai/gpt-*
+    if model.startswith("claude-"):
+        return "anthropic/claude-opus-4.8"
+    return "openai/gpt-5.6-luna"          # 兜底：当前便宜旗舰
+
 # 尽量读取 .env（可选依赖，没装也能跑，只要 shell 里已 export）
 try:
     from dotenv import load_dotenv
@@ -139,7 +150,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--model",
         default=None,
-        help="覆盖 OPENAI_MODEL 环境变量（默认沿用环境变量，未设置则为 gpt-4o-mini）。",
+        help="覆盖 OPENAI_MODEL 环境变量（默认沿用环境变量，未设置则为 gpt-5.6-luna）。",
     )
     parser.add_argument(
         "--max-steps",
@@ -200,14 +211,24 @@ def main():
         print_scenarios()
         return
 
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        print("错误：未找到环境变量 OPENAI_API_KEY。请先设置后重试。", file=sys.stderr)
-        print("（提示：只想看角色/场景清单可运行 `python demo.py --list-roles`，无需 Key。）", file=sys.stderr)
-        sys.exit(1)
+    model = args.model or os.environ.get("OPENAI_MODEL", "gpt-5.6-luna")
 
-    base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
-    model = args.model or os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+    # 通用回退：优先直连 OPENAI_API_KEY；否则用 OPENROUTER_API_KEY 走 OpenRouter；
+    # 都没有则报清晰错误。
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if api_key:
+        base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
+    elif os.environ.get("OPENROUTER_API_KEY"):
+        api_key = os.environ["OPENROUTER_API_KEY"]
+        base_url = "https://openrouter.ai/api/v1"
+        model = _to_openrouter_model(model)
+        print(f"（未检测到 OPENAI_API_KEY，改用 OpenRouter；模型映射为 {model}）")
+    else:
+        print("错误：未找到环境变量 OPENAI_API_KEY 或 OPENROUTER_API_KEY。请先设置后重试。",
+              file=sys.stderr)
+        print("（提示：只想看角色/场景清单可运行 `python demo.py --list-roles`，无需 Key。）",
+              file=sys.stderr)
+        sys.exit(1)
 
     client = OpenAI(api_key=api_key, base_url=base_url)
 

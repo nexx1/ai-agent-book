@@ -89,6 +89,8 @@ def main() -> None:
     if args.model:
         Config.MODEL = args.model
 
+    # 先解析 provider（含 OpenRouter 回退），确保打印出的模型/端点是最终生效值。
+    Config.validate()
     print("模型：%s  | base_url：%s" % (Config.MODEL, Config.BASE_URL))
     agent = StagedAgent(
         max_revisions=args.max_revisions,

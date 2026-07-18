@@ -61,9 +61,14 @@ python demo.py --help
 | `--model` | 环境变量 `OPENAI_MODEL` | 覆盖使用的模型名 |
 | `--list-stages` | — | 离线打印三阶段配置后退出，不调用任何 API（适合无 Key 时先看清机制） |
 
-可配环境变量（见 `env.example`）：`OPENAI_API_KEY`（必填）、`OPENAI_BASE_URL`（默认官方）、
-`OPENAI_MODEL`（默认 `gpt-4o-mini`，便宜省钱）、`OPENAI_TEMPERATURE`（默认 0.3）。
+可配环境变量（见 `env.example`）：`OPENAI_API_KEY`、`OPENAI_BASE_URL`（默认官方）、
+`OPENAI_MODEL`（默认 `gpt-5.6-luna`，当前便宜旗舰）、`OPENAI_TEMPERATURE`（默认 0.3）。
 也可切到兼容 OpenAI 协议的 Kimi / Doubao。
+
+**通用回退**：优先用 `OPENAI_API_KEY` 直连 OpenAI；若未设置该变量但设了
+`OPENROUTER_API_KEY`，则自动改走 OpenRouter，并把模型名映射到其命名空间
+（`gpt-5.6-luna` → `openai/gpt-5.6-luna`）。提示：`gpt-5.6` 系列直连 OpenAI 需组织验证，
+只填 `OPENROUTER_API_KEY`（不填 `OPENAI_API_KEY`）即可强制走 OpenRouter，更省事。
 
 ## 演示说明了什么问题
 
@@ -128,8 +133,8 @@ python demo.py --help
 
 ## 局限
 
-- **依赖 gpt-4o-mini 的能力**：默认用便宜模型控制演示成本，其指令遵循与代码质量弱于更强模型，
-  换成更强模型（如 `gpt-4o` / `gpt-5`）通常能更快收敛、更少回退。
+- **依赖所选模型的能力**：默认用便宜旗舰 `gpt-5.6-luna` 控制演示成本；换成更强模型
+  通常能更快收敛、更少回退。
 - **单一固定任务**：内置演示任务是「整理下载文件夹」，虽然新增了 `--task` 参数可覆盖，
   但 `simulated_user.py` 的预设问答是围绕这个任务场景设计的，换成差异很大的任务时模拟用户可能答不上点子上。
 - **模拟用户是预设答案**：`SimulatedUser` 按关键词匹配预设回答，不是真正理解语义的用户，
