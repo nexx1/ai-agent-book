@@ -60,13 +60,43 @@ pip install -r requirements.txt
 cp env.example .env        # 或直接 export
 export OPENAI_API_KEY=sk-...   # 默认模型 gpt-4o-mini，可用 OPENAI_MODEL 覆盖
 python demo.py
-python demo.py --paper papers/your_paper.md   # 换一篇论文/大纲
+python demo.py --paper papers/your_paper.md    # 换一篇论文/大纲
+python demo.py -o output/deck.pptx --model gpt-4o   # 指定输出路径 / 模型
 python demo.py --help                          # 查看全部参数
 ```
 
 一条命令 `python demo.py` 即可跑通：真实调用 OpenAI，打印渐进式披露的每一步，
 生成 `output/presentation.pptx`，并用 python-pptx 重新打开该文件读回页数与每页标题
 作为校验。
+
+### 命令行参数
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `--paper` | `papers/sample_paper.md` | 输入论文/大纲（markdown）路径 |
+| `--output` / `-o` | `output/presentation.pptx` | 输出 `.pptx` 路径 |
+| `--model` | `OPENAI_MODEL` 或 `gpt-4o-mini` | OpenAI 模型名 |
+| `--max-turns` | `8` | agentic loop 的最大轮数 |
+| `--offline` | 关 | 离线演示，不调用 OpenAI（见下） |
+
+### 离线模式（无需 API key，可复现）
+
+没有 OpenAI key 时，用 `--offline` 即可跑通同一套三层渐进式披露：它读取内置大纲
+`papers/sample_outline.json`，走**与在线完全相同**的工具通道
+（`read_skill` → `read_skill_file` → `run_skill_script`）确定性地生成并校验 pptx。
+唯一区别是「用哪个 Skill、大纲写什么」由预置文件给定，而非模型即时决策——因此它
+适合作为可复现的教学演示与冒烟测试。
+
+```bash
+python demo.py --offline                       # 生成 output/presentation.pptx，全程无网络
+python demo.py --offline -o output/deck.pptx   # 指定输出路径
+```
+
+捆绑脚本本身也可脱离 Agent 单独运行，直接把大纲 JSON 落地为 pptx：
+
+```bash
+python skills/pptx/scripts/generate_pptx.py papers/sample_outline.json output/deck.pptx
+```
 
 ## 真实运行输出（节选）
 
@@ -103,7 +133,8 @@ python demo.py --help                          # 查看全部参数
 | `skills/pptx/SKILL.md` | pptx Skill：frontmatter（元数据）+ 核心流程 |
 | `skills/pptx/reference.md` | 第三层细则：版式/配色/python-pptx 技术点 |
 | `skills/pptx/scripts/generate_pptx.py` | 捆绑生成器，用 python-pptx 从大纲生成 .pptx |
-| `papers/sample_paper.md` | 自带的精简论文/大纲（输入） |
+| `papers/sample_paper.md` | 自带的精简论文/大纲（在线模式输入） |
+| `papers/sample_outline.json` | 内置幻灯片大纲（离线模式输入，同时是 payload schema 的范例） |
 | `output/presentation.pptx` | 生成的演示文稿（输出，运行后产生） |
 
 ## 换一篇论文

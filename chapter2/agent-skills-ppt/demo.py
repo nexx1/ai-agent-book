@@ -130,7 +130,8 @@ def tool_read_skill_file(catalog: dict, name: str, rel_path: str) -> str:
     return content
 
 
-def tool_run_skill_script(catalog: dict, name: str, script: str, payload: str) -> str:
+def tool_run_skill_script(catalog: dict, name: str, script: str, payload: str,
+                          out_path: Path) -> str:
     info = catalog.get(name)
     if not info:
         return f"[error] 未找到 Skill: {name}"
@@ -149,7 +150,6 @@ def tool_run_skill_script(catalog: dict, name: str, script: str, payload: str) -
     except json.JSONDecodeError as e:
         return f"[error] payload 不是合法 JSON: {e}"
 
-    out_path = OUTPUT_DIR / "presentation.pptx"
     log(f"  >>> [执行捆绑脚本] run_skill_script('{name}', '{script}') "
         f"生成 {out_path.name} ...")
     result = module.build_presentation(data, str(out_path))
@@ -203,22 +203,25 @@ TOOLS = [
 ]
 
 
-def dispatch(catalog: dict, name: str, args: dict) -> str:
+def dispatch(catalog: dict, name: str, args: dict, out_path: Path) -> str:
     if name == "read_skill":
         return tool_read_skill(catalog, args["name"])
     if name == "read_skill_file":
         return tool_read_skill_file(catalog, args["name"], args["path"])
     if name == "run_skill_script":
-        return tool_run_skill_script(catalog, args["name"], args["script"], args["payload"])
+        return tool_run_skill_script(catalog, args["name"], args["script"],
+                                     args["payload"], out_path)
     return f"[error] 未知工具: {name}"
 
 
 # ---------------------------------------------------------------------------
 # 主流程：agentic loop
 # ---------------------------------------------------------------------------
-def run_agent() -> Path | None:
+def run_agent(paper_path: Path, model: str, out_path: Path,
+              max_turns: int = 8) -> Path | None:
     if not os.environ.get("OPENAI_API_KEY"):
         log("错误：未设置 OPENAI_API_KEY，请先 export OPENAI_API_KEY=sk-...")
+        log("（无 key 时可用 --offline 走内置大纲、确定性地复现三层渐进式披露并生成 pptx。）")
         sys.exit(1)
 
     # timeout + 自动重试：单次网络/SSL 抖动不至于让整个 agentic loop 崩溃
@@ -234,7 +237,7 @@ def run_agent() -> Path | None:
     log(f"（薄目录约 {len(system_prompt)} 字符 / 数百 token；各 Skill 的详细流程此刻并不在上下文中）")
     log("=" * 72)
 
-    paper = PAPER_PATH.read_text(encoding="utf-8")
+    paper = paper_path.read_text(encoding="utf-8")
     user_task = (
         "请把下面这篇论文做成一份 8-12 页的演示文稿（含标题页、目录页、问题背景、"
         "方法概述、关键结果、局限性、小结页），总页数务必落在 8-12 页。"
@@ -250,9 +253,9 @@ def run_agent() -> Path | None:
     log("\n【任务下发】要求 Agent 从论文生成演示文稿。观察它如何按需渐进式披露：\n")
 
     final_result = None
-    for turn in range(1, 9):
+    for turn in range(1, max_turns + 1):
         resp = client.chat.completions.create(
-            model=MODEL,
+            model=model,
             messages=messages,
             tools=TOOLS,
             temperature=0.2,
@@ -271,7 +274,7 @@ def run_agent() -> Path | None:
             except json.JSONDecodeError:
                 args = {}
             log(f"\n[Agent 第 {turn} 轮] 调用工具 -> {fn}({', '.join(f'{k}={_short(v)}' for k, v in args.items())})")
-            result = dispatch(catalog, fn, args)
+            result = dispatch(catalog, fn, args, out_path)
             if fn == "run_skill_script" and not result.startswith("[error]"):
                 final_result = json.loads(result)
                 log(f"  >>> 生成结果：{result}")
@@ -284,6 +287,48 @@ def run_agent() -> Path | None:
     if final_result:
         return Path(final_result["path"])
     return None
+
+
+# ---------------------------------------------------------------------------
+# 离线复现：无 OpenAI key 时，用内置大纲（papers/sample_outline.json）确定性地
+# 走完与在线完全相同的三层渐进式披露与工具通道（read_skill / read_skill_file /
+# run_skill_script），从而在没有任何 API 访问权限时也能真实生成并校验 pptx。
+# 唯一区别是「用哪个 Skill、大纲写什么」由预置脚本给定，而非模型即时决策。
+# ---------------------------------------------------------------------------
+OUTLINE_PATH = ROOT / "papers" / "sample_outline.json"
+
+
+def run_offline(out_path: Path) -> Path | None:
+    catalog = scan_skill_catalog()
+    system_prompt = build_system_prompt(catalog)
+    log("=" * 72)
+    log("【离线模式】不调用 OpenAI，用内置大纲确定性地复现三层渐进式披露。")
+    log("【第一层·元数据】启动时只看到这份薄 Skill 目录（system prompt）：")
+    log("-" * 72)
+    log(system_prompt)
+    log("-" * 72)
+    log(f"（薄目录约 {len(system_prompt)} 字符；各 Skill 的详细流程此刻并不在上下文中）")
+    log("=" * 72)
+
+    if not OUTLINE_PATH.exists():
+        log(f"错误：内置大纲不存在：{OUTLINE_PATH}")
+        return None
+
+    # 与在线 agentic loop 相同的工具通道，只是调用序列由脚本给定
+    log("\n【离线回放】按 SKILL.md 约定，逐层加载并调用捆绑脚本：")
+    dispatch(catalog, "read_skill", {"name": "pptx"}, out_path)
+    dispatch(catalog, "read_skill_file",
+             {"name": "pptx", "path": "reference.md"}, out_path)
+
+    payload = OUTLINE_PATH.read_text(encoding="utf-8")
+    result = dispatch(catalog, "run_skill_script",
+                      {"name": "pptx", "script": "generate_pptx.py", "payload": payload},
+                      out_path)
+    if result.startswith("[error]"):
+        log(f"  >>> 生成失败：{result}")
+        return None
+    log(f"  >>> 生成结果：{result}")
+    return Path(json.loads(result)["path"])
 
 
 def _short(v, n=48):
@@ -323,18 +368,32 @@ def parse_args():
     )
     p.add_argument("--paper", default=str(PAPER_PATH),
                    help="输入论文/大纲（markdown）路径，默认 papers/sample_paper.md。")
+    p.add_argument("--output", "-o", default=str(OUTPUT_DIR / "presentation.pptx"),
+                   help="输出 .pptx 路径，默认 output/presentation.pptx。")
+    p.add_argument("--model", default=MODEL,
+                   help="OpenAI 模型名，默认取环境变量 OPENAI_MODEL，否则 gpt-4o-mini。")
+    p.add_argument("--max-turns", type=int, default=8,
+                   help="agentic loop 的最大轮数，默认 8。")
+    p.add_argument("--offline", action="store_true",
+                   help="离线演示：不调用 OpenAI，用内置大纲（papers/sample_outline.json）"
+                        "确定性地走完三层渐进式披露并生成 pptx（无需 API key，可复现）。")
     return p.parse_args()
 
 
 def main():
     args = parse_args()
-    global PAPER_PATH
-    PAPER_PATH = Path(args.paper)
-    if not PAPER_PATH.exists():
-        log(f"错误：论文文件不存在：{PAPER_PATH}")
-        sys.exit(1)
-    OUTPUT_DIR.mkdir(exist_ok=True)
-    pptx_path = run_agent()
+    paper_path = Path(args.paper)
+    out_path = Path(args.output)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if args.offline:
+        pptx_path = run_offline(out_path)
+    else:
+        if not paper_path.exists():
+            log(f"错误：论文文件不存在：{paper_path}")
+            sys.exit(1)
+        pptx_path = run_agent(paper_path, args.model, out_path, args.max_turns)
+
     if pptx_path and pptx_path.exists():
         verify_pptx(pptx_path)
     else:

@@ -18,6 +18,8 @@ KV cache stores the key-value pairs from the attention mechanism of transformer 
 - **Robust Error Handling**: Continues execution when tools fail, passing errors as results
 - **Six Implementation Modes**: Demonstrates correct and incorrect KV cache patterns
 - **Comprehensive Metrics**: Tracks TTFT, total time, cache hits/misses, and token usage
+- **Offline Comparison Report** (`--report`): Renders the cross-strategy table from saved result files without an API key
+- **Cost Estimate**: Comparison table adds an illustrative billable-token / savings column (configurable via `--cache-price-ratio`)
 - **Detailed Logging**: Provides insights into cache behavior and performance impact
 - **Smart Completion**: Automatically considers responses without tool calls as final answers
 - **Argument Filtering**: Safely handles unexpected tool arguments without breaking
@@ -127,19 +129,55 @@ python main.py
 
 ### Command Line Options
 
+The CLI ships Chinese `--help`; run `python main.py --help` for the full list. Key flags:
+
+| Flag | 说明 |
+|------|------|
+| `--mode MODE` | 运行单个策略（correct / dynamic_system / shuffled_tools / dynamic_profile / sliding_window / text_format） |
+| `--compare` | 依次运行全部策略并打印横向对比表（需要 API Key） |
+| `--report` | **离线**：从已保存的 `result_*.json` / `comparison_*.json` 生成对比表，**无需 API Key** |
+| `--input ...` | 配合 `--report` 指定结果文件 / 通配符 / 目录（默认扫描当前目录） |
+| `--model MODEL` | 选择模型（默认 `kimi-k3`） |
+| `--output PATH` | 指定结果 JSON 的输出路径（默认按模式 + 时间戳自动命名） |
+| `--cache-price-ratio R` | 成本估算中缓存 token 相对正常 token 的计费比例（默认 `0.1`，即一折），仅作示意 |
+| `--task`, `--root-dir` | 自定义任务 / 文件工具根目录 |
+
 ```bash
 # Run specific mode directly (bypasses menu)
 python main.py --mode correct
 
-# Run comparison across all modes
+# Pick a model and write to a named file
+python main.py --mode sliding_window --model kimi-k2 --output run.json
+
+# Run comparison across all modes (needs API key)
 python main.py --compare
 
 # Disable interactive mode
 python main.py --no-interactive --mode correct
-
-# Available modes: correct, dynamic_system, shuffled_tools, 
-#                 dynamic_profile, sliding_window, text_format
 ```
+
+### Offline Comparison Report (no API key)
+
+Live runs need a Moonshot/Kimi API key. To read the **already-saved** result files
+and print the cross-strategy comparison table in one command:
+
+```bash
+# Uses the result_*.json files already in this directory
+python main.py --report
+
+# Or point at specific files / a directory, and change the assumed cache discount
+python main.py --report --input result_correct_*.json result_text_format_*.json
+python main.py --report --cache-price-ratio 0.5
+```
+
+The table compares **cache hit rate, cache ratio, TTFT latency, total time, and an
+illustrative billable-token / savings estimate** across strategies. The report parses
+both the legacy single-mode files (metrics stored as an `AgentMetrics(...)` string) and
+the newer dict-format files, so pre-existing results remain usable.
+
+> The `Bill.Tok` / `Save%` columns are a transparent function of the *measured* token
+> counts and the `--cache-price-ratio` you supply — they are an illustration of the cost
+> impact, not a specific provider's price quote.
 
 ### Custom Tasks
 
@@ -209,23 +247,25 @@ When comparing implementations, you should observe:
       Average (after first): 0.203s
       Improvement: 76.7%
 
-KV CACHE COMPARISON RESULTS
-================================================================================
-
-Mode                 First TTFT   Avg TTFT     Total (s)    Cached       Hit Rate    
----------------------------------------------------------------------------------------
-correct              0.823        0.287        15.234       45,678       95.2        
-dynamic_system       2.145        2.089        28.567       0            0.0         
-shuffled_tools       2.089        2.012        27.123       1,234        12.3        
-dynamic_profile      1.967        1.923        26.789       5,678        23.4        
-sliding_window       1.234        1.189        20.456       12,345       45.6        
-text_format          2.456        2.398        31.234       0            0.0         
-
-📈 TTFT Progression (first 5 iterations):
-  correct             : 0.82s → 0.23s → 0.20s → 0.19s → 0.19s
-  dynamic_system      : 2.15s → 2.09s → 2.08s → 2.10s → 2.07s
-  shuffled_tools      : 2.09s → 2.01s → 2.00s → 2.02s → 1.99s
 ```
+
+### Comparison Table (`--report` on the saved result files in this directory)
+
+These are the actual measured numbers from the committed `result_*.json` files (three
+strategies were captured; run `--compare` to generate all six under one task):
+
+```
+Mode             Iters  1st TTFT   Avg TTFT   Total(s)   Prompt    Cached    Hit%    Cache%   Bill.Tok   Save%
+----------------------------------------------------------------------------------------------------------------
+correct          1      4.438      4.438      4.438      501       501       100.0   100.0    50         90.0
+sliding_window   4      3.602      2.793      8.478      3,139     1,525     100.0   48.6     1,766      43.7
+text_format      5      6.355      6.695      33.658     11,247    7,669     100.0   68.2     4,345      61.4
+```
+
+`Cache%` is the share of prompt tokens served from cache; `Bill.Tok`/`Save%` assume cached
+tokens bill at `--cache-price-ratio` (default 0.1) of a normal token — an illustration, not
+a provider quote. Note these three rows came from separate runs/tasks, so absolute values are
+only strictly comparable within a single `--compare` run.
 
 ## 💡 Key Insights
 

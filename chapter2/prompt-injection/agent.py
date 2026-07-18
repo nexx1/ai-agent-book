@@ -249,8 +249,13 @@ class Agent:
         return self.result
 
 
-def make_client() -> tuple[OpenAI, str]:
-    """从环境变量构造 OpenAI 客户端。仅使用 OPENAI_API_KEY。"""
+def make_client(
+    model: str | None = None, base_url: str | None = None
+) -> tuple[OpenAI, str]:
+    """从环境变量构造 OpenAI 客户端。仅使用 OPENAI_API_KEY。
+
+    model / base_url 若显式传入则优先于环境变量，便于命令行覆盖。
+    """
     try:
         from dotenv import load_dotenv
 
@@ -263,9 +268,9 @@ def make_client() -> tuple[OpenAI, str]:
         raise RuntimeError(
             "未找到 OPENAI_API_KEY，请在环境变量或 .env 中设置（参考 env.example）。"
         )
-    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    model = model or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     # 允许自定义 base_url（默认官方），但请勿指向已失效的第三方网关。
-    base_url = os.getenv("OPENAI_BASE_URL") or None
+    base_url = base_url or os.getenv("OPENAI_BASE_URL") or None
     # timeout + 自动重试：应对偶发的网络抖动 / 限流 / 5xx，避免单次瞬时错误
     # 直接让整张成功率矩阵作废。
     client = OpenAI(

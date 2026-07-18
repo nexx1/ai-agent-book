@@ -794,26 +794,28 @@ Always think step by step and use tools to gather information. When you have eno
         }
 
 
-def compare_implementations(api_key: str, task: str, root_dir: str = ".") -> Dict[str, Any]:
+def compare_implementations(api_key: str, task: str, root_dir: str = ".",
+                            model: str = "kimi-k3") -> Dict[str, Any]:
     """
     Compare different KV cache implementations
-    
+
     Args:
         api_key: API key for Kimi
         task: Task to execute
         root_dir: Root directory for file operations
-        
+        model: Model to use for all modes
+
     Returns:
         Comparison results
     """
     results = {}
-    
+
     for mode in KVCacheMode:
         logger.info(f"\n{'='*60}")
         logger.info(f"Testing mode: {mode.value}")
         logger.info(f"{'='*60}")
-        
-        agent = KVCacheAgent(api_key=api_key, mode=mode, root_dir=root_dir, verbose=True)
+
+        agent = KVCacheAgent(api_key=api_key, mode=mode, model=model, root_dir=root_dir, verbose=True)
         result = agent.execute_task(task)
         
         results[mode.value] = {

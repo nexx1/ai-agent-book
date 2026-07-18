@@ -49,9 +49,9 @@ This experiment implements and compares 6 different context compression strategi
 
 ## Installation
 
-1. Clone the repository and navigate to the project:
+1. Navigate to the project:
 ```bash
-cd projects/week2/context-compression
+cd chapter2/context-compression
 ```
 
 2. Install dependencies:
@@ -66,7 +66,8 @@ cp env.example .env
 ```
 
 Required API keys:
-- `MOONSHOT_API_KEY`: For Kimi K3 model (required)
+- `MOONSHOT_API_KEY`: For the Kimi (Moonshot) model (required). The book's 实验 2-9 uses Kimi K2 (128K window);
+  the model name is configurable via `MODEL_NAME` in `.env` or the `-m/--model` CLI flag (e.g. `kimi-k2.5`, `kimi-k3`, `moonshot-v1-128k`).
 - `SERPER_API_KEY`: For web search (optional, will use mock data if not provided)
 
 Get API keys:
@@ -77,52 +78,73 @@ Get API keys:
 
 | Script | Purpose | Output |
 |--------|---------|--------|
-| `demo.py` | Interactive demo with single strategy selection | Console output |
-| `experiment.py` | Automated comparison of all strategies | Results in `results/` |
-| `run_all_strategies.py` | Run all strategies with detailed logging | Logs in `logs/` |
+| `main.py` | Interactive demo / single strategy runner | Console output |
+| `experiment.py` | Automated comparison of strategies (token / compression / success table) | Results in `results/` |
+| `run_all_strategies.py` | Run strategies with detailed per-round logging | Logs in `logs/` |
+| `quickstart.py` | Menu wrapper that checks env and launches the above | Console output |
+
+All three main entrypoints ship an `argparse` CLI (Chinese `--help`). Run any of them with `-h`
+to see the full option list. The three most useful flags are shared:
+
+- `-s/--strategy` — 选择要运行的一种或多种策略（默认全部 6 种）；取值见下方“Compression Strategies”或运行 `--list-strategies`
+- `-m/--model` — 覆盖模型名（默认读取环境变量 `MODEL_NAME`）
+- `-n/--max-iterations` — 每个策略允许的最大工具调用轮数
+
+Strategy aliases accepted by `--strategy`: `no_compression`, `individual`, `combined`,
+`context_aware`, `citations`, `windowed`.
 
 ## Usage
 
-### Run Full Experiment
+### Run Full Experiment (comparison table + JSON)
 
-Compare all 6 strategies:
+Compare all 6 strategies (default), or a subset:
 ```bash
-python experiment.py
+python experiment.py                          # 运行全部 6 种策略并生成对比表
+python experiment.py -s context_aware         # 只运行“上下文感知压缩”
+python experiment.py -s individual combined   # 只对比两种非任务感知策略
+python experiment.py -m moonshot-v1-128k -o results/run.json   # 换模型 + 指定输出路径
+python experiment.py --list-strategies        # 查看可选策略名
 ```
 
 This will:
-- Test each compression strategy sequentially
+- Test each selected compression strategy sequentially
 - Research OpenAI co-founders' affiliations
-- Generate metrics and comparison report
-- Save results to `results/experiment_TIMESTAMP.json`
+- Print a comparison table (Success / Time / **Tokens** / Compression / Overflows)
+- Save results to `results/experiment_TIMESTAMP.json` (or the path given by `-o/--output`)
+
+Key flags: `-s/--strategy`, `-m/--model`, `-o/--output`, `-n/--max-iterations`, `--streaming`, `--list-strategies`.
 
 ### Run All Strategies with Logging
 
-Run all strategies with detailed logging and compression output:
+Run strategies with detailed logging and compression output:
 ```bash
-python run_all_strategies.py
+python run_all_strategies.py                  # 全部 6 种策略
+python run_all_strategies.py -s windowed      # 只跑自适应窗口化
+python run_all_strategies.py --log-dir logs/k2 -m kimi-k2.5
 ```
 
 Features:
-- Runs all 6 compression strategies sequentially
+- Runs the selected compression strategies sequentially
 - Logs all compression summaries to file
 - Shows streaming output in real-time
-- Saves detailed logs to `logs/strategy_run_TIMESTAMP.log`
-- Saves JSON results to `logs/strategy_results_TIMESTAMP.json`
+- Saves detailed logs to `<log-dir>/strategy_run_TIMESTAMP.log`
+- Saves JSON results to `<log-dir>/strategy_results_TIMESTAMP.json`
 - Generates comparison summary at the end
+
+Key flags: `-s/--strategy`, `-m/--model`, `--log-dir`, `-n/--max-iterations`, `--list-strategies`.
 
 ### Interactive Demo
 
 Test individual strategies with streaming output:
 ```bash
-python demo.py              # Default: streaming enabled
-python demo.py --no-streaming  # Disable streaming output
+python main.py                    # Interactive: choose a strategy at the prompt
+python main.py -s citations       # Run a specific strategy non-interactively
+python main.py -s windowed --no-streaming  # Disable streaming output
 ```
 
 Features:
-- Choose any compression strategy
-- Streaming responses enabled by default
-- Optional `--no-streaming` flag to disable streaming
+- Choose any compression strategy (interactively, or with `-s/--strategy`)
+- Streaming responses enabled by default (`--no-streaming` to disable)
 - See real-time execution
 - Try follow-up questions (for citation strategy)
 
@@ -156,10 +178,13 @@ context-compression/
 ├── web_tools.py              # Web search and fetch tools
 ├── compression_strategies.py  # Compression strategy implementations
 ├── agent.py                  # Main research agent with streaming
-├── experiment.py             # Experiment runner for comparisons
-├── demo.py                   # Interactive demo
+├── experiment.py             # Experiment runner for comparisons (CLI)
+├── run_all_strategies.py     # Detailed per-round logging runner (CLI)
+├── main.py                   # Interactive demo / single strategy runner (CLI)
+├── quickstart.py             # Menu wrapper (env check + launcher)
 ├── requirements.txt          # Python dependencies
 ├── env.example              # Environment variables template
+├── logs/                    # Detailed logs (created by run_all_strategies.py)
 └── results/                 # Experiment results (created on run)
 ```
 
@@ -171,7 +196,7 @@ context-compression/
 - **Mock data**: Provides sample data when API key unavailable
 
 ### Compression Strategies (`compression_strategies.py`)
-- **ContextCompressor**: Implements all 5 strategies
+- **ContextCompressor**: Implements all 6 strategies
 - **CompressedContent**: Data class for compressed results
 - **Dynamic compression**: Based on query and context
 

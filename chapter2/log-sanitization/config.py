@@ -6,7 +6,9 @@ import os
 from pathlib import Path
 
 # Ollama Configuration
-OLLAMA_MODEL = "qwen3:8b"  # Using larger model for better accuracy
+# 默认使用 0.6B 超小模型，呼应本章“小模型也能胜任结构化任务”的论点，
+# 且可在 CPU / 消费级设备上运行；可用 --model 覆盖为 qwen3:1.7b、qwen3:4b 等。
+OLLAMA_MODEL = "qwen3:0.6b"
 OLLAMA_TEMPERATURE = 0.1  # Low temperature for consistent detection
 
 # Paths
