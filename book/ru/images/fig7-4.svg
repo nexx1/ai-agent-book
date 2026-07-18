@@ -1,27 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 330" width="780" height="330" style="background:#ffffff">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 340" width="780" height="340" style="background:#ffffff">
 <defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
 
-<text x="390" y="80" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Q(s,a) ← Q(s,a) + α [ r + γ max Q(s',a') − Q(s,a) ]</text>
-<text x="390" y="108" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">                              TD-цель                 текущая оценка</text>
-<rect x="30" y="155" width="720" height="170" rx="4" fill="#f5f5f5" stroke="#333333" stroke-width="2"/>
-<text x="390" y="177" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Пример: Agent берёт красный ключ в кладовой</text>
-<text x="80" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Состояние s</text>
-<text x="80" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Кладовая</text>
-<text x="80" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">В руках: пусто</text>
-<text x="230" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Действие a</text>
-<text x="230" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Взять красный ключ</text>
-<text x="370" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Награда r</text>
-<text x="370" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">+5</text>
-<text x="510" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Новое состояние s'</text>
-<text x="510" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Кладовая</text>
-<text x="510" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">В руках: красный ключ</text>
-<text x="670" y="207" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">max Q(s',a')</text>
-<text x="670" y="230" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">0.63</text>
-<text x="670" y="250" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="normal">(открыть дверь на север)</text>
-<text x="50" y="283" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Расчёт:</text>
-<text x="110" y="283" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Q(кладовая, взять ключ) ← 0.25 + 0.2 × [5 + 0.99×0.63 − 0.25]</text>
-<text x="110" y="307" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">                    = 0.25 + 0.2 × [5.624 − 0.25] = 0.25 + 1.075 = 1.325</text>
-<text x="150" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">Ошибка TD = 5.374</text>
-<text x="400" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">→ Положительное обновление: Q-value растёт</text>
-<text x="660" y="345" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Распространение награды</text>
+<!-- Формула Q-learning -->
+<text x="390" y="75" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="18" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Q(s,a) ← Q(s,a) + α [ r + γ max Q(s',a') − Q(s,a) ]</text>
+<text x="390" y="100" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="normal">TD-цель                                        текущая оценка</text>
+
+<!-- Блок примера -->
+<rect x="30" y="130" width="720" height="175" rx="6" fill="#f8f8f8" stroke="#333333" stroke-width="2"/>
+<text x="390" y="150" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="15" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Пример: Agent берёт красный ключ в кладовой</text>
+
+<!-- 5 колонок данных -->
+<!-- Колонка 1: Состояние s -->
+<rect x="40" y="165" width="130" height="75" rx="4" fill="#ffffff" stroke="#cccccc" stroke-width="1"/>
+<text x="105" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#999999" text-anchor="middle" dominant-baseline="central">Состояние s</text>
+<text x="105" y="202" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Кладовая</text>
+<text x="105" y="222" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">В руках: пусто</text>
+
+<!-- Стрелка → -->
+<text x="180" y="205" font-family="Arial, sans-serif" font-size="16" fill="#999999" text-anchor="middle" dominant-baseline="central">→</text>
+
+<!-- Колонка 2: Действие a -->
+<rect x="190" y="165" width="120" height="75" rx="4" fill="#ffffff" stroke="#cccccc" stroke-width="1"/>
+<text x="250" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#999999" text-anchor="middle" dominant-baseline="central">Действие a</text>
+<text x="250" y="205" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Взять</text>
+<text x="250" y="222" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="13" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">красный ключ</text>
+
+<!-- Стрелка → -->
+<text x="320" y="205" font-family="Arial, sans-serif" font-size="16" fill="#999999" text-anchor="middle" dominant-baseline="central">→</text>
+
+<!-- Колонка 3: Награда r -->
+<rect x="330" y="165" width="80" height="75" rx="4" fill="#ffffff" stroke="#cccccc" stroke-width="1"/>
+<text x="370" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#999999" text-anchor="middle" dominant-baseline="central">Награда r</text>
+<text x="370" y="208" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="20" fill="#2d8a2d" text-anchor="middle" dominant-baseline="central" font-weight="bold">+5</text>
+
+<!-- Стрелка → -->
+<text x="420" y="205" font-family="Arial, sans-serif" font-size="16" fill="#999999" text-anchor="middle" dominant-baseline="central">→</text>
+
+<!-- Колонка 4: Новое состояние s' -->
+<rect x="430" y="165" width="140" height="75" rx="4" fill="#ffffff" stroke="#cccccc" stroke-width="1"/>
+<text x="500" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#999999" text-anchor="middle" dominant-baseline="central">Новое состояние s'</text>
+<text x="500" y="202" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="14" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">Кладовая</text>
+<text x="500" y="222" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="12" fill="#666666" text-anchor="middle" dominant-baseline="central">В руках: красный ключ</text>
+
+<!-- Стрелка → -->
+<text x="580" y="205" font-family="Arial, sans-serif" font-size="16" fill="#999999" text-anchor="middle" dominant-baseline="central">→</text>
+
+<!-- Колонка 5: max Q(s',a') -->
+<rect x="590" y="165" width="150" height="75" rx="4" fill="#ffffff" stroke="#cccccc" stroke-width="1"/>
+<text x="665" y="182" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#999999" text-anchor="middle" dominant-baseline="central">max Q(s',a')</text>
+<text x="665" y="202" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="16" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">0.63</text>
+<text x="665" y="222" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="11" fill="#666666" text-anchor="middle" dominant-baseline="central">(открыть дверь на север)</text>
+
+<!-- Расчёт -->
+<text x="50" y="265" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="bold">Расчёт:</text>
+<text x="120" y="265" font-family="'Courier New', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">Q(кладовая, взять ключ) ← 0.25 + 0.2 × [5 + 0.99×0.63 − 0.25]</text>
+<text x="120" y="287" font-family="'Courier New', monospace" font-size="13" fill="#333333" text-anchor="start" dominant-baseline="central">                        = 0.25 + 1.075 = 1.325</text>
+
+<!-- Итоги внизу -->
+<line x1="40" y1="308" x2="740" y2="308" stroke="#dddddd" stroke-width="1"/>
+<text x="130" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">Ошибка TD = 5.374</text>
+<text x="390" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central">→ Положительное обновление: Q растёт</text>
+<text x="660" y="328" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif" font-size="13" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Распространение награды →</text>
 </svg>
