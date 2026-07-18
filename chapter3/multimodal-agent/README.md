@@ -84,7 +84,7 @@ Then compare the three extraction paradigms on the same file + question
 python demo.py \
   --file test_files/sample_chart.png \
   --query "Which quarter had the highest revenue, and what was the exact value?" \
-  --model gpt-4o
+  --model gpt-5.6-luna
 ```
 
 All CLIs expose a Chinese `--help` (`python demo.py --help`,
@@ -166,7 +166,7 @@ Run the comprehensive comparison demo:
 
 ```bash
 # Compare extraction modes for a specific file (flags form)
-python demo.py --file document.pdf --query "What are the key findings?" --model gpt-4o
+python demo.py --file document.pdf --query "What are the key findings?" --model gpt-5.6-luna
 
 # Backward-compatible positional form still works
 python demo.py document.pdf "What are the key findings?"
@@ -174,7 +174,7 @@ python demo.py document.pdf "What are the key findings?"
 # Save the full transcript, and skip the cross-model pass
 python demo.py --file test_files/sample_chart.png \
   --query "Which quarter had the highest revenue?" \
-  --model gpt-4o --skip-model-comparison --output result.txt
+  --model gpt-5.6-luna --skip-model-comparison --output result.txt
 
 # This will run:
 # 1. Native multimodal mode
@@ -276,7 +276,7 @@ summary = await agent.process_multimodal_content(
 ```python
 # Extract to text with tools for follow-up questions
 agent = MultimodalAgent(
-    model="gpt-4o",
+    model="gpt-5.6-luna",
     mode=ExtractionMode.EXTRACT_TO_TEXT,
     enable_tools=True
 )
@@ -294,7 +294,7 @@ await agent.chat("What's the color scheme?")
 ```python
 # Using Whisper for transcription
 agent = MultimodalAgent(
-    model="gpt-4o",
+    model="gpt-5.6-luna",
     mode=ExtractionMode.EXTRACT_TO_TEXT
 )
 
@@ -407,9 +407,9 @@ MIT License - See LICENSE file for details
 This experiment now supports a **universal OpenRouter fallback** for its chat LLM.
 
 - If the primary provider key (e.g. `MOONSHOT_API_KEY` / `KIMI_API_KEY` / `OPENAI_API_KEY` / `DOUBAO_API_KEY` …) is present, behavior is unchanged.
-- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `kimi-k3`, `doubao-*`) fall back to `openai/gpt-4o`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
+- Else if `OPENROUTER_API_KEY` is set, the chat LLM is automatically routed through OpenRouter (`https://openrouter.ai/api/v1`). Model names are mapped automatically: `gpt-*`/`o1-*` → `openai/…`, `claude-*` → `anthropic/claude-opus-4.8`, ids already containing `/` are kept as-is, and other provider-native ids (e.g. `kimi-k3`, `doubao-*`) fall back to `openai/gpt-5.6-luna`. Set `OPENROUTER_MODEL` to force a specific OpenRouter model id.
 - Else a clear error lists the accepted keys.
 
 Add `OPENROUTER_API_KEY=...` to your `.env` (see `env.example`) to enable it.
 
-> Note: image analysis and text chat route through OpenRouter (vision-capable default `openai/gpt-4o`). Audio transcription (Whisper) and native-PDF extraction still require a direct OpenAI/Gemini key.
+> Note: image analysis and text chat route through OpenRouter (vision-capable default `openai/gpt-5.6-luna`). Audio transcription (Whisper) and native-PDF extraction still require a direct OpenAI/Gemini key.

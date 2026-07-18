@@ -109,7 +109,7 @@ python cli.py battle --source llm --candidate-models claude-opus-4-8 claude-haik
 export OPENROUTER_API_KEY=sk-or-...
 python cli.py battle --source llm --judge-backend openrouter \
   --judge-model claude-opus-4-8 \
-  --candidate-models anthropic/claude-haiku-4.5 openai/gpt-4o-mini
+  --candidate-models anthropic/claude-haiku-4.5 openai/gpt-5.6-luna
 ```
 
 模拟来源会同时打印真值潜在实力，方便和恢复出的排行榜对照；在线 Elo 与 Bradley-Terry 两种方法都应恢复出与真值一致的排名（分值不必精确对齐，见下文说明）。

@@ -197,7 +197,7 @@ python main.py --batch queries.txt --mode non-agentic
 #### With Different Providers
 
 ```bash
-python main.py --provider openai --model gpt-4o-2024-11-20
+python main.py --provider openai --model gpt-5.6-luna
 python main.py --provider doubao --model doubao-seed-1-6-thinking-250715
 python main.py --provider siliconflow --query "你好"
 ```

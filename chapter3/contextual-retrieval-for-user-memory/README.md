@@ -165,7 +165,7 @@ python main.py
 python main.py --mode evaluate --category layer1
 
 # 关闭上下文化做对照，并指定模型与输出
-python main.py --mode evaluate --category layer1 --no-contextual --model gpt-4o --output results/plain_eval.json
+python main.py --mode evaluate --category layer1 --no-contextual --model gpt-5.6-luna --output results/plain_eval.json
 ```
 
 完整命令行参数见 `python main.py --help`（含中文说明）。

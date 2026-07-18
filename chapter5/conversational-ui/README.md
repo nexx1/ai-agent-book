@@ -171,7 +171,7 @@ r=agent.customize(c,m,pathlib.Path('frontend'),'把发送按钮改成橙色'); \
 | --- | --- |
 | `OPENAI_API_KEY` | 必填其一，本实验读取此项（未配置时用 `OPENROUTER_API_KEY` 兜底） |
 | `OPENAI_BASE_URL` | 可选，切换到兼容 OpenAI 协议的服务端点 |
-| `MODEL` | 可选，默认 `gpt-4o-mini` |
+| `MODEL` | 可选，默认 `gpt-5.6-luna` |
 
 ## 如何适配 / 扩展
 

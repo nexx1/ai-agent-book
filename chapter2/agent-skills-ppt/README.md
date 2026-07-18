@@ -62,7 +62,7 @@ cp env.example .env        # 或直接 export
 export OPENAI_API_KEY=sk-...   # 默认模型 gpt-5.6-luna，可用 OPENAI_MODEL 覆盖
 python demo.py
 python demo.py --paper papers/your_paper.md    # 换一篇论文/大纲
-python demo.py -o output/deck.pptx --model gpt-4o   # 指定输出路径 / 模型
+python demo.py -o output/deck.pptx --model gpt-5.6-luna   # 指定输出路径 / 模型
 python demo.py --help                          # 查看全部参数
 ```
 

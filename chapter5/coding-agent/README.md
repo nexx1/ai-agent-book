@@ -183,7 +183,7 @@ When falling back, the native model id is **prefixed/mapped** to an OpenRouter i
 | `claude-sonnet-*` (e.g. `claude-sonnet-5`) | `anthropic/claude-sonnet-4.6` |
 | `claude-haiku-*` | `anthropic/claude-haiku-4.5` |
 | `claude-opus-*` / other `claude-*` | `anthropic/claude-opus-4.8` |
-| `gpt-*` / `o1-*` (e.g. `gpt-4o-mini`) | `openai/<model>` |
+| `gpt-*` / `o1-*` (e.g. `gpt-5.6-luna`) | `openai/<model>` |
 | already prefixed (`vendor/model`) | passed through unchanged |
 
 So a user with **only** an `OPENROUTER_API_KEY` can run, e.g.:
@@ -192,8 +192,8 @@ So a user with **only** an `OPENROUTER_API_KEY` can run, e.g.:
 # No ANTHROPIC_API_KEY needed — falls back to OpenRouter automatically
 python main.py --provider anthropic --model claude-sonnet-5 -p "..."
 
-# gpt-4o-mini routed through OpenRouter (no OPENAI_API_KEY needed)
-python main.py --provider openai --model gpt-4o-mini -p "..."
+# gpt-5.6-luna routed through OpenRouter (no OPENAI_API_KEY needed)
+python main.py --provider openai --model gpt-5.6-luna -p "..."
 ```
 
 Set `PROVIDER=openrouter` explicitly (with a `vendor/model` id) if you want to

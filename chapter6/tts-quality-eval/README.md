@@ -88,7 +88,7 @@ python demo.py --fresh   # 忽略已有音频全部重合成
 # 多 provider / 自定义输入（新增）
 python demo.py --providers openai,minimax,elevenlabs   # 跨服务商横向对比（需各自 key）
 python demo.py --text '2026年营收增长37.5%'             # 用一段自定义文本替换语料库
-python demo.py --judge-model gpt-4o                     # 覆盖 LLM 评审模型
+python demo.py --judge-model gpt-5.6-luna                 # 覆盖 LLM 评审模型
 python demo.py --output ./runs/exp1                     # 自定义输出目录
 
 # 离线（无需任何 API key）

@@ -71,7 +71,7 @@ python demo.py         # 默认跑完全部 3×4=12 个组合，每组合 4 次
 
 ```bash
 python demo.py                       # 全部组合，每组合 4 次（等同无参默认行为）
-python demo.py -n 5 -m gpt-4o        # 换模型并每组合跑 5 次
+python demo.py -n 5 -m gpt-5.6-luna        # 换模型并每组合跑 5 次
 python demo.py -a 2,3 -d 1,4         # 只跑 间接/记忆 注入 × D1/D4 两种防御
 python demo.py -o result.json        # 结果矩阵额外保存为 JSON
 python demo.py --list                # 离线查看有哪些攻击/防御，不调用 API
