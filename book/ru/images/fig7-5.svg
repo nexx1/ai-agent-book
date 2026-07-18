@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 780 440" width="780" height="440" style="background:#ffffff">
+<defs><marker id="ah" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#333333"/></marker><marker id="ah-light" markerWidth="12" markerHeight="8" refX="12" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="#999999"/></marker></defs>
+
+<rect x="30" y="60" width="320" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="200.0" y="82.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="10" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">(Модель начинает генерацию отсюда)</text>
+<rect x="430" y="60" width="320" height="45" rx="6" fill="#d0d0d0" stroke="#333333" stroke-width="2"/>
+<text x="590" y="82.5" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" fill="#333333" text-anchor="middle" dominant-baseline="central" font-weight="bold">LLM Agent</text>
+<rect x="30" y="115" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="115" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">① Веса внимания «как» к каждому предшествующему слову</text>
+<text x="438" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Открытость и безграничность: Natural Language + Tool Calling (вызов инструментов)</text>
+<text x="390" y="137" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Пространство действий</text>
+<rect x="30" y="163" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="163" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Нулевое априорное знание, старт со случайной стратегии</text>
+<text x="438" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Огромный объем знаний из Pre-training (предобучение) + правила языковой игры</text>
+<text x="390" y="185" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Априорное знание</text>
+<rect x="30" y="211" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="211" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="11" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Хеш-кодирование: state_id=0x3A7F</text>
+<text x="438" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">user: «Смотреть только за последний месяц»</text>
+<text x="390" y="233" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Представление состояния</text>
+<rect x="30" y="259" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="259" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">«Цель оптимизации — задержка или пропускная способность?»</text>
+<text x="438" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Reward (вознаграждение) + Language Feedback (языковая обратная связь) + Self-reflection (саморефлексия)</text>
+<text x="390" y="281" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Сигнал обучения</text>
+<rect x="30" y="307" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="307" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="329" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Без внутренних рассуждений (чисто реактивный)</text>
+<text x="438" y="329" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Мышление как специальное действие (CoT)</text>
+<text x="390" y="329" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Способность к мышлению</text>
+<rect x="30" y="355" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="355" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Единая среда, при изменении правил требуется переобучение</text>
+<text x="438" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="9" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">Zero-shot/Few-shot перенос между задачами</text>
+<text x="390" y="377" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Способность к обобщению</text>
+<rect x="30" y="403" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<rect x="430" y="403" width="320" height="44" rx="3" fill="#f0f0f0" stroke="#333333" stroke-width="2"/>
+<text x="38" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">~10000 episodes / 10 сек</text>
+<text x="438" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#333333" text-anchor="start" dominant-baseline="central" font-weight="normal">~1 episode / 2 минуты</text>
+<text x="390" y="425" font-family="Arial, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="14" fill="#666666" text-anchor="middle" dominant-baseline="central" font-weight="bold">Эффективность выборки</text>
+</svg>
